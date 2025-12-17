@@ -39,7 +39,7 @@ It records existence only.
 
 Canonical repository location:
 
-https://github.com/Jonnyrockin/Evidence-Sidecar.git
+[https://github.com/Jonnyrockin/Evidence-Sidecar.git](https://github.com/JonathanMastersWatson/Evidence-Sidecar)
 
 (Repository contents may evolve; this commitment anchors intent and existence,
 not future revisions.)
