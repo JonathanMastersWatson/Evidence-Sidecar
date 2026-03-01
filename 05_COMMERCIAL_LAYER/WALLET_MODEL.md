@@ -1,9 +1,17 @@
 # Wallet Model
 
-This document defines the wallet model used to fund evidence settlement without granting the commercial layer authority over evidence generation or disclosure.
+This document defines the wallet model used to fund settlement
+within the Cryptographic Verification Sidecar (CVS) specification.
 
-The wallet exists to pay for settlement.  
-It does not own evidence.
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If conflict exists, the canonical specification governs.
+
+The wallet funds settlement anchoring.
+It does not own, modify, or influence evidence.
 
 ---
 
@@ -13,124 +21,145 @@ The wallet model exists to:
 
 - fund ledger settlement operations,
 - attribute settlement costs,
-- and produce auditable financial records.
+- produce auditable financial records.
 
-It does not participate in evidence generation, verification, or interpretation.
+It does not participate in:
+
+- evidence generation,
+- verification,
+- disclosure decisions,
+- interpretation.
 
 ---
 
 ## Separation of Concerns
 
-The wallet must be strictly separated from:
+The wallet MUST remain structurally separated from:
 
 - the witness engine,
-- the disclosure kernel,
-- and the evidence model.
+- the Disclosure Kernel,
+- the Evidence Model.
 
-This separation ensures that economic incentives do not distort evidence integrity.
+Economic mechanisms MUST NOT alter evidence integrity.
 
 ---
 
 ## Funding Directionality
 
-Settlement funding flows in one direction only:
+Settlement funding flows:
 
-- from the party choosing to produce evidence,
+- from the party choosing to anchor evidence,
 - toward the public settlement layer.
 
-No downstream party may influence evidence generation through payment.
+Payment MUST NOT grant influence over:
+
+- evidence generation,
+- observation scope,
+- disclosure semantics.
 
 ---
 
-## No Pay-to-Observe
+## Uniform Evidence Production
 
-The wallet must not enable:
+The wallet model MUST NOT enable:
 
 - selective observation based on payment,
-- differential evidence quality tiers,
-- or outcome-based settlement incentives.
+- tiered evidence integrity,
+- outcome-based settlement incentives.
 
-Evidence is produced uniformly.
-
----
-
-## Pre-Funding Model
-
-Settlement wallets may be pre-funded to ensure:
-
-- uninterrupted settlement,
-- predictable operating costs,
-- and bounded financial exposure.
-
-Pre-funding must not block evidence generation.
+Evidence production remains structurally uniform.
 
 ---
 
-## Deferred Payment Handling
+## Pre-Funding
+
+Settlement wallets MAY be pre-funded to ensure:
+
+- uninterrupted anchoring,
+- predictable operating cost,
+- bounded financial exposure.
+
+Pre-funding MUST NOT condition evidence generation.
+
+---
+
+## Deferred Funding
 
 If settlement funds are temporarily unavailable:
 
-- evidence generation must continue,
-- settlement may be deferred,
-- and the funding gap must be observable.
+- evidence generation MUST continue,
+- settlement MAY be deferred,
+- funding delay MUST be observable.
 
-Financial failure must not cause evidence failure.
+Financial state MUST NOT determine evidentiary state.
 
 ---
 
 ## Cost Attribution
 
-The wallet must support attribution of settlement costs to:
+The wallet SHOULD support deterministic attribution of settlement cost to:
 
 - systems,
 - streams,
 - customers,
-- or organizational units.
+- organizational units.
 
-Attribution rules must be deterministic and auditable.
+Attribution rules MUST be auditable.
 
 ---
 
 ## Transparency of Charges
 
-Settlement charges must be:
+Settlement charges SHOULD be:
 
 - visible,
 - itemized,
-- and verifiable.
+- verifiable.
 
-Opaque pricing models undermine trust.
-
----
-
-## No Asset Custody Claims
-
-The wallet does not:
-
-- custody assets for others,
-- act as a financial intermediary,
-- or provide investment services.
-
-It is a funding mechanism only.
+Opaque charging mechanisms reduce accountability.
 
 ---
 
-## Regulatory Posture
+## No Custodial Role
 
-The wallet model is designed to:
+The wallet:
 
-- minimize regulatory surface area,
-- avoid commingling of funds,
-- and remain subordinate to existing financial controls.
+- does not custody assets for third parties,
+- does not act as a financial intermediary,
+- does not provide investment services.
 
-Implementations must comply with applicable financial regulations.
+It exists solely to fund anchoring operations.
+
+---
+
+## Regulatory Scope
+
+Implementations using a wallet model:
+
+- remain subject to applicable financial regulations,
+- must comply with relevant jurisdictional requirements.
+
+The CVS specification does not alter regulatory obligations.
+
+---
+
+## Scope Limitation
+
+The wallet model:
+
+- does not define revenue strategy,
+- does not mandate pricing models,
+- does not guarantee economic performance.
+
+It defines structural funding boundaries only.
 
 ---
 
 ## Summary
 
-The wallet pays for witnessing.
+The wallet funds settlement.
 
-It does not buy truth, influence evidence, or control disclosure.
+Funding must remain independent from evidence integrity.
 
-Money flows around the system — never through it.
+Economic flow surrounds the architecture —
+it does not control it.
