@@ -279,6 +279,14 @@ See `LEGAL_NOTICE.md` for limitation of responsibility and implementation bounda
 
 ---
 
+## Scope of Repository
+
+This repository contains only the canonical CVS reference architecture and associated cryptographic hashes.
+
+Exploratory, philosophical, or governance discussion documents are excluded and do not form part of the CVS specification.
+
+---
+
 ## Final Note
 
 Trust is no longer established at runtime.
