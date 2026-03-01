@@ -1,11 +1,23 @@
+
 # Hash Chaining
 
-This document defines the required method for chaining Evidence Objects into a tamper-evident sequence.
+This document defines the required method for chaining Evidence Objects
+within the Cryptographic Verification Sidecar (CVS) specification.
+
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If conflict exists, the canonical specification governs.
+
+This document is normative.
 
 Hash chaining ensures that:
+
 - evidence cannot be modified retroactively,
 - omissions are detectable,
-- and temporal order is preserved.
+- temporal order is preserved.
 
 ---
 
@@ -14,9 +26,10 @@ Hash chaining ensures that:
 Hash chaining provides structural integrity.
 
 It allows an independent verifier to determine whether:
+
 - any Evidence Object has been altered,
 - any object has been removed,
-- or any sequence has been reordered.
+- any sequence has been reordered.
 
 This is achieved without storing payload data.
 
@@ -24,9 +37,10 @@ This is achieved without storing payload data.
 
 ## Basic Chain Structure
 
-Each Evidence Object must include a reference to its immediate predecessor.
+Each Evidence Object MUST include a reference to its immediate predecessor.
 
-The chain reference is typically implemented as:
+The chain reference MUST be:
+
 - the cryptographic hash of the prior Evidence Object, or
 - a digest derived from the prior object’s canonical representation.
 
@@ -36,28 +50,30 @@ This creates a linear, append-only sequence.
 
 ## Chain Continuity
 
-Chain continuity must be enforced as follows:
+Chain continuity MUST satisfy the following:
 
-- Each new Evidence Object must reference exactly one predecessor.
-- The initial object in a sequence must be explicitly marked as a genesis event.
-- Any missing reference constitutes a detectable gap.
+- Each new Evidence Object MUST reference exactly one predecessor.
+- The initial object in a sequence MUST be explicitly marked as a genesis event.
+- Any missing reference MUST constitute a detectable gap.
 
-Silent truncation is prohibited.
+Silent truncation is non-conformant.
 
 ---
 
 ## Segmentation and Batching
 
-For high-throughput systems, evidence may be segmented.
+For high-throughput systems, evidence MAY be segmented.
 
 Segmentation rules:
-- segments must be clearly defined (e.g., time-based or count-based),
-- segmentation boundaries must be recorded,
-- and segments must be chained in order.
+
+- segments MUST be clearly defined (e.g., time-based or count-based),
+- segmentation boundaries MUST be recorded,
+- segments MUST be chained in order.
 
 Within a segment:
-- individual events may be aggregated,
-- a segment-level hash may represent the group.
+
+- individual events MAY be aggregated,
+- a segment-level hash MAY represent the group.
 
 This enables scalability without sacrificing integrity.
 
@@ -65,45 +81,46 @@ This enables scalability without sacrificing integrity.
 
 ## Merkle Structures
 
-Implementations may use Merkle trees to:
+Implementations MAY use Merkle trees to:
 
 - batch multiple Evidence Objects,
 - reduce settlement overhead,
-- or support partial verification.
+- support partial verification.
 
 When Merkle structures are used:
-- the construction method must be disclosed,
-- root hashes must be preserved,
-- and leaf membership must be provable.
 
-Merkle roots may be anchored externally.
+- the construction method MUST be documented,
+- root hashes MUST be preserved,
+- leaf membership MUST be independently provable.
+
+Merkle roots MAY be anchored externally.
 
 ---
 
 ## Hash Function Requirements
 
-Hash functions used for chaining must:
+Hash functions used for chaining MUST:
 
 - be cryptographically secure,
 - be collision-resistant,
 - be widely standardized,
-- and have known security properties.
+- have documented security properties.
 
-The chosen hash function must be documented.
+The chosen hash function MUST be disclosed.
 
-Custom or proprietary hash functions are prohibited.
+Proprietary or undocumented hash mechanisms are non-conformant.
 
 ---
 
 ## Canonicalization
 
-Before hashing, Evidence Objects must be:
+Before hashing, Evidence Objects MUST be:
 
 - serialized in a canonical form,
 - free of ambiguous ordering,
-- and stable across implementations.
+- stable across implementations.
 
-Canonicalization rules must be explicit and deterministic.
+Canonicalization rules MUST be explicit and deterministic.
 
 ---
 
@@ -113,9 +130,9 @@ Tampering is detected when:
 
 - a hash fails to validate,
 - a chain reference is missing,
-- or a sequence is inconsistent.
+- a sequence is inconsistent.
 
-Detection does not require trust in the sidecar operator.
+Detection MUST NOT require trust in the operator.
 
 ---
 
@@ -123,30 +140,44 @@ Detection does not require trust in the sidecar operator.
 
 When evidence production is interrupted:
 
-- the chain must reflect the interruption,
-- gaps must not be silently filled,
-- and continuity must not be inferred.
+- the chain MUST reflect the interruption,
+- gaps MUST NOT be silently filled,
+- continuity MUST NOT be inferred.
 
-Explicit discontinuity markers may be used.
+Explicit discontinuity markers MAY be used.
 
 ---
 
 ## Interaction with Settlement
 
-Hash chains may be periodically anchored to an external settlement layer.
+Hash chains MAY be periodically anchored to an external settlement layer.
 
 Anchoring:
+
 - does not alter the chain,
 - does not affect execution,
-- and serves only as a public receipt.
+- serves only as a public timestamped receipt.
 
 Settlement frequency is implementation-specific.
 
 ---
 
+## Scope Limitation
+
+Hash chaining:
+
+- does not prove correctness,
+- does not establish intent,
+- does not guarantee regulatory sufficiency.
+
+It preserves integrity and detectability only.
+
+---
+
 ## Summary
 
-Hash chaining transforms individual observations into a coherent historical record.
+Hash chaining transforms individual observations into a coherent,
+tamper-evident historical record.
 
 Integrity emerges from structure, not authority.
 
