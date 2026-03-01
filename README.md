@@ -273,6 +273,12 @@ Complexity is not a feature.
 
 ---
 
+## Legal Notice
+
+See `LEGAL_NOTICE.md` for limitation of responsibility and implementation boundaries.
+
+---
+
 ## Final Note
 
 Trust is no longer established at runtime.
