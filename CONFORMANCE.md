@@ -1,7 +1,14 @@
-# Conformance
+# CVS Conformance
 
 This document defines the requirements for an implementation to be considered
-**conformant** with the Evidence Sidecar Reference Architecture.
+**CVS-Conforming** with the Cryptographic Verification Sidecar (CVS) specification.
+
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If any conflict exists, the canonical specification takes precedence.
 
 Conformance is behavioral, not declarative.
 
@@ -12,49 +19,31 @@ Conformance is behavioral, not declarative.
 The key words **MUST**, **MUST NOT**, **SHOULD**, and **MAY** in this document
 are to be interpreted as described in RFC 2119.
 
-Where conflict exists, **MUST** and **MUST NOT** take precedence.
+Where conflict exists, canonical specification documents govern.
 
 ---
 
-## Conformance Levels
+## Conformance Scope
 
-This architecture defines two conformance levels.
+An implementation may be described as **CVS-Conforming** only if it satisfies
+all mandatory requirements defined in this document and the canonical specification.
 
-### 1. Core Conformance (Mandatory)
-
-An implementation claiming conformance **MUST** satisfy all Core Conformance
-requirements defined in this document.
-
-Core conformance is binary.
-
-Partial compliance is non-conformance.
-
----
-
-### 2. Optional Extensions (Non-Normative)
-
-Implementations **MAY** provide additional features or integrations provided that:
-
-- they do not violate any Core Conformance requirements
-- they do not alter evidence semantics
-- they do not introduce hidden authority
-- they are clearly identified as non-normative
-
-Optional extensions do not affect conformance status.
+Conformance is a technical classification.
+It is not a certification, endorsement, regulatory determination, or compliance badge.
 
 ---
 
 ## Mandatory Properties
 
-A conformant implementation **MUST** exhibit all of the following properties.
+A CVS-Conforming implementation MUST exhibit all of the following properties.
 
 ---
 
 ### Fail-Open Behavior
 
-- The system **MUST NOT** block, delay, or alter execution of the observed system.
-- Failure of the sidecar **MUST NOT** affect system availability.
-- Failure **MUST** be observable through detectable gaps.
+- The system MUST NOT block, delay, or alter execution of the observed system.
+- Failure of the sidecar MUST NOT affect system availability.
+- Failure MUST be observable through detectable gaps.
 
 Fail-open behavior is non-negotiable.
 
@@ -62,9 +51,9 @@ Fail-open behavior is non-negotiable.
 
 ### Witness-Only Authority
 
-- The sidecar **MUST NOT** execute application logic.
-- The sidecar **MUST NOT** enforce policy or outcomes.
-- The sidecar **MUST NOT** alter observed inputs or outputs.
+- The sidecar MUST NOT execute application logic.
+- The sidecar MUST NOT enforce policy or outcomes.
+- The sidecar MUST NOT alter observed inputs or outputs.
 
 The sidecar witnesses events only.
 
@@ -72,9 +61,9 @@ The sidecar witnesses events only.
 
 ### Detectable Gaps
 
-- Absence of observation **MUST** be detectable.
-- Gaps **MUST NOT** be concealed, smoothed, or reconstructed.
-- Resumption after failure **MUST** be explicit.
+- Absence of observation MUST be detectable.
+- Gaps MUST NOT be concealed, smoothed, or reconstructed.
+- Resumption after failure MUST be explicit.
 
 Silence is evidence.
 
@@ -82,9 +71,9 @@ Silence is evidence.
 
 ### Hash Chaining
 
-- Evidence Objects **MUST** be cryptographically chained.
-- Alteration of historical evidence **MUST** be detectable.
-- Chaining **MUST** preserve ordering within observable scope.
+- Evidence Objects MUST be cryptographically chained.
+- Alteration of historical evidence MUST be detectable.
+- Chaining MUST preserve ordering within observable scope.
 
 Hash chaining establishes integrity, not correctness.
 
@@ -92,9 +81,9 @@ Hash chaining establishes integrity, not correctness.
 
 ### Independent Verification
 
-- Verification **MUST** be possible without trusting the operator.
-- Verification **MUST NOT** require privileged access.
-- Evidence integrity **MUST** be independently reproducible.
+- Verification MUST be possible without trusting the operator.
+- Verification MUST NOT require privileged access.
+- Evidence integrity MUST be independently reproducible.
 
 Verification is external by design.
 
@@ -102,97 +91,56 @@ Verification is external by design.
 
 ### Selective Disclosure
 
-- Disclosure **MUST** be scope-bounded.
-- Disclosure **MUST** follow minimal revelation principles.
-- Over-disclosure **MUST** be preventable by design.
+- Disclosure MUST be scope-bounded.
+- Disclosure MUST follow minimal revelation principles.
+- Over-disclosure MUST be preventable by design.
 
 Disclosure is precise, not maximal.
 
 ---
 
-## Prohibited Capabilities
+## Non-Conformant Patterns
 
-A conformant implementation **MUST NOT** include the following capabilities.
+The following architectural patterns are considered non-conformant:
 
----
+- Inline execution dependency where evidence generation blocks execution
+- Systems that fail closed
+- Evidence systems that conceal detectable gaps
+- Retroactive reconstruction of evidence
+- Proprietary verification mechanisms requiring privileged trust
+- Settlement-dependent execution
 
-### Inline Execution Dependency
-
-- Evidence generation **MUST NOT** be inline with execution.
-- Settlement **MUST NOT** be required for execution to proceed.
-
-Execution never waits for evidence.
-
----
-
-### Enforcement Logic
-
-- The sidecar **MUST NOT** enforce rules, compliance, or policy.
-- The sidecar **MUST NOT** block or modify outcomes.
-
-Enforcement is outside scope.
-
----
-
-### Pay-to-Verify
-
-- Verification **MUST NOT** require payment.
-- Receipts **MUST** be publicly verifiable.
-
-Charging for verification undermines trust.
-
----
-
-### Hidden Authority
-
-- No undisclosed decision power **MAY** exist.
-- No implicit trust delegation **MAY** be assumed.
-- Authority boundaries **MUST** be explicit and minimal.
-
-Hidden power is non-conformant.
+Non-conformance does not invalidate a system.
+It simply means the system should not be described as CVS-Conforming.
 
 ---
 
 ## Evidence of Conformance
 
-An implementation claiming conformance **MUST** be able to demonstrate:
+An implementation described as CVS-Conforming SHOULD be able to demonstrate:
 
 - fail-open behavior under induced failure
 - detectable evidence gaps
-- independent verification by third parties
-- scoped disclosure without payload exposure
+- independent third-party verification
+- scoped disclosure without payload overexposure
 - resistance to coercive over-disclosure
 
 Demonstration outweighs documentation.
 
 ---
 
-## Claims an Implementation Must Not Make
+## Claims Outside Scope
 
-A conformant implementation **MUST NOT** claim that it:
+CVS-Conforming implementations do not imply:
 
-- guarantees correctness
-- guarantees truth
-- prevents wrongdoing
-- enforces compliance
-- replaces legal or regulatory judgment
+- guaranteed correctness
+- guaranteed truth
+- prevention of wrongdoing
+- regulatory compliance
+- legal sufficiency in any jurisdiction
 
-Such claims are non-conformant.
-
----
-
-## Non-Conformance Examples
-
-The following patterns constitute non-conformance:
-
-- inline logging that blocks execution
-- evidence systems that fail closed
-- “always-on” full disclosure pipelines
-- proprietary verification requirements
-- settlement-dependent execution
-- retroactive evidence reconstruction
-
-These failures are architectural, not incidental.
+CVS strengthens evidentiary defensibility.
+It does not replace legal judgment or regulatory authority.
 
 ---
 
@@ -206,12 +154,4 @@ This document is normative and must be read in conjunction with:
 - `03_SELECTIVE_DISCLOSURE/*`
 - `07_FAILURE_MODES/*`
 
-Where ambiguity exists, this document governs conformance.
-
----
-
-## Summary
-
-Conformance is earned by behavior under stress.
-
-An implementation either conforms — or it does not.
+Where ambiguity exists, the canonical CVS specification governs.
