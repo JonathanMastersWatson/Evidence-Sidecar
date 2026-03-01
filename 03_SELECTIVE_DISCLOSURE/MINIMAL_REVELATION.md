@@ -1,6 +1,17 @@
+
 # Minimal Revelation
 
-This document defines the **Minimal Revelation Principle** governing all disclosures produced under this architecture.
+This document defines the Minimal Revelation Principle within the
+Cryptographic Verification Sidecar (CVS) specification.
+
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If conflict exists, the canonical specification governs.
+
+This document is normative.
 
 Minimal revelation ensures that transparency does not become exposure.
 
@@ -10,84 +21,86 @@ Minimal revelation ensures that transparency does not become exposure.
 
 The purpose of minimal revelation is to:
 
-- satisfy legitimate inquiries,
+- satisfy scoped inquiries,
 - protect unrelated data and systems,
 - preserve confidentiality and autonomy,
-- and prevent disclosure from becoming a liability vector.
+- prevent disclosure from expanding beyond its defined boundary.
 
-Revealing more than necessary is a defect.
+Revealing more than necessary weakens structural integrity.
 
 ---
 
 ## Principle
 
-For any disclosure request, the system must reveal:
+For any disclosure request, the system MUST reveal:
 
-> **The smallest amount of evidence sufficient to answer the specific question posed.**
+> The smallest set of evidence sufficient to answer the defined question.
 
-Nothing more.
+No additional evidence SHOULD be included.
 
 ---
 
 ## Field-Level Minimization
 
-Disclosed Evidence Objects must include only:
+Disclosed Evidence Objects MUST include only:
 
-- fields required for verification,
+- fields required for independent verification,
 - fields required to establish ordering,
 - fields required to demonstrate integrity.
 
-Optional or contextual fields must be excluded unless explicitly required by scope.
+Optional or contextual fields MUST be excluded unless explicitly required
+by the defined scope.
 
 ---
 
 ## Temporal Minimization
 
-Disclosures must be limited to:
+Disclosures MUST be limited to:
 
 - the shortest feasible time window,
-- bounded strictly by the request,
-- inclusive of gaps within that window.
+- strictly bounded by the request,
+- inclusive of any gaps within that window.
 
-Adjacent periods must not be included by default.
+Adjacent periods MUST NOT be included by default.
 
 ---
 
 ## Structural Minimization
 
-Disclosure must include:
+Disclosure MUST include:
 
 - only the relevant evidence path,
-- only the necessary chain references,
-- only the required attestations.
+- only necessary chain references,
+- only required attestations.
 
-Parallel chains, unrelated segments, and external context must be excluded.
+Parallel chains, unrelated segments, or external context
+MUST NOT be included.
 
 ---
 
 ## No Derived Inference
 
-The disclosure process must not:
+The disclosure process MUST NOT:
 
 - infer intent,
-- infer correctness,
-- infer causality beyond ordering,
-- or provide analytical conclusions.
+- assert correctness,
+- construct narrative conclusions,
+- imply causality beyond observable ordering.
 
-Only raw, verifiable structure is disclosed.
+Disclosure provides structure, not interpretation.
 
 ---
 
 ## No Payload Revelation
 
-Minimal revelation explicitly prohibits disclosure of:
+Minimal revelation requires that disclosures MUST NOT include:
 
 - original payload data,
 - content bodies,
-- personal information,
+- personal data,
 - proprietary system internals.
 
-Proof is established cryptographically, not through content exposure.
+Integrity is established cryptographically.
 
 ---
 
@@ -95,40 +108,38 @@ Proof is established cryptographically, not through content exposure.
 
 Where minimization requires removal of fields:
 
-- omission is preferred to redaction,
-- omitted fields must be noted as omitted,
-- redaction must not alter canonical structure.
+- omission SHOULD be preferred to redaction,
+- omitted fields SHOULD be structurally indicated,
+- redaction MUST NOT alter canonical integrity.
 
-Hidden redaction is prohibited.
+Opaque redaction that alters structure is non-conformant.
 
 ---
 
 ## Disclosure Sufficiency
 
-The system must be able to demonstrate that:
+A CVS-Conforming implementation MUST be able to demonstrate that:
 
-- disclosed evidence is sufficient for verification,
-- no additional undisclosed evidence is required to validate integrity,
-- and completeness within scope is provable.
+- disclosed evidence is sufficient for independent verification,
+- no undisclosed evidence is required to validate integrity,
+- completeness within scope is provable.
 
 ---
 
-## Legal and Regulatory Alignment
+## Scope Limitation
 
-Minimal revelation aligns with:
+Minimal revelation:
 
-- proportionality principles,
-- data minimization requirements,
-- and reasonable disclosure standards.
+- does not determine legal sufficiency,
+- does not evaluate proportionality,
+- does not define authorization policy.
 
-Over-disclosure increases legal risk.
+It governs structural disclosure boundaries only.
 
 ---
 
 ## Summary
 
-Minimal revelation is not secrecy.
-
-It is precision.
+Minimal revelation is precision.
 
 Transparency is strongest when it is bounded, intentional, and exact.
