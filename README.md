@@ -1,4 +1,4 @@
-# Evidence Sidecar Reference Architecture
+# CVS (Cryptographic Verification Sidecar) — Reference Architecture
 
 This repository defines a **reference architecture for independent, fail-open evidence systems**.
 
@@ -14,11 +14,24 @@ It is an architectural constraint set.
 
 ---
 
+## Canonical Specification (Precedence)
+
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If any other file in this repository conflicts with the canonical CVS specification above, the canonical files take precedence.
+
+All other documents in this repository are supporting material and are being updated to align with the canonical CVS specification.
+
+---
+
 ## What This Is
 
-This repository defines an architectural pattern known as an **evidence sidecar**.
+This repository defines an architectural pattern known as a **Cryptographic Verification Sidecar (CVS)** — also referred to descriptively as an **evidence sidecar**.
 
-An evidence sidecar is an external witness that:
+A CVS is an external witness that:
 
 - observes system events out-of-band,
 - records cryptographic evidence,
@@ -229,6 +242,13 @@ This repository defines one possible realization of those constraints: the
 production of independent, fail-open evidence.
 
 Neither governs the other.
+
+---
+
+## License
+
+Licensed under the **Apache License, Version 2.0**. See `LICENSE`.  
+Attributions and required notices (if any) are in `NOTICE`.
 
 ---
 
