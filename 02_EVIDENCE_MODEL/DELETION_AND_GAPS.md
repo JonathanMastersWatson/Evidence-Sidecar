@@ -1,34 +1,45 @@
 # Deletion and Gaps
 
-This document defines how deletion, interruption, and absence are represented within the evidence sidecar architecture.
+This document defines how deletion, interruption, and absence are represented
+within the Cryptographic Verification Sidecar (CVS) specification.
 
-The ability to **detect absence** is as important as the ability to record presence.
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If conflict exists, the canonical specification governs.
+
+This document is normative.
+
+The ability to detect absence is as important as the ability to record presence.
 
 ---
 
 ## Principle of Detectable Absence
 
-Evidence systems must treat deletion and interruption as first-class conditions.
+CVS MUST treat deletion and interruption as first-class conditions.
 
-It must be possible for an independent verifier to determine that:
+An independent verifier MUST be able to determine whether:
 
 - evidence once existed and was removed,
 - evidence should have existed but does not,
-- or evidence production was interrupted.
+- evidence production was interrupted.
 
-Silent deletion is prohibited.
+Silent deletion is non-conformant.
 
 ---
 
 ## No Silent Deletion
 
-Evidence Objects must not be:
+Evidence Objects MUST NOT be:
 
 - removed without trace,
 - overwritten without detection,
-- or truncated without observable consequence.
+- truncated without observable consequence.
 
-Any modification to stored evidence must itself generate evidence.
+Any modification to stored evidence MUST itself generate a new
+Evidence Object representing that action.
 
 ---
 
@@ -36,95 +47,99 @@ Any modification to stored evidence must itself generate evidence.
 
 Once an Evidence Object has been chained:
 
-- it must not be deleted from the logical record,
+- it MUST NOT be deleted from the logical record,
 - even if physical storage is reclaimed.
 
-If physical deletion is required (e.g. retention expiry):
-- the deletion must be recorded,
-- the hash chain must remain intact,
-- and the deletion event must be observable.
+If physical deletion is required (e.g., retention expiry):
+
+- the deletion MUST be represented as evidence,
+- the hash chain MUST remain intact,
+- the deletion event MUST be observable.
+
+Logical continuity is preserved even if storage changes.
 
 ---
 
 ## Gap Representation
 
-Gaps in evidence may occur due to:
+Gaps in evidence MAY occur due to:
 
 - sidecar failure,
 - network partition,
 - power loss,
 - operator intervention,
-- or intentional disengagement.
+- intentional disengagement.
 
 When a gap occurs:
 
-- it must be explicitly represented,
-- its duration must be bounded where possible,
-- and normal operation must resume with a clear boundary.
+- it MUST be explicitly represented,
+- its duration SHOULD be bounded where possible,
+- normal operation MUST resume with a clear boundary.
 
-Gaps must never be implicitly healed.
+Gaps MUST NOT be silently repaired.
 
 ---
 
 ## Gap Markers
 
-Implementations may use explicit gap markers to indicate:
+Implementations MAY use explicit gap markers to indicate:
 
 - start of interruption,
 - end of interruption,
-- reason for interruption (if known).
+- known cause (if available).
 
-Gap markers must be chained like all other Evidence Objects.
+Gap markers MUST be chained like all other Evidence Objects.
 
 ---
 
 ## Distinguishing Absence Types
 
-Where possible, evidence should distinguish between:
+Where technically feasible, evidence SHOULD distinguish between:
 
-- **observed absence** (sidecar operational, no events),
-- **unobserved absence** (sidecar unavailable),
-- **intentional disengagement**,
-- **storage loss**.
+- observed absence (sidecar operational, no events),
+- unobserved absence (sidecar unavailable),
+- intentional disengagement,
+- storage loss.
 
-Such distinctions improve forensic clarity.
+Clear categorization improves interpretability.
 
 ---
 
 ## Retention and Pruning
 
-Retention policies may require evidence to be pruned.
+Retention policies MAY require evidence pruning.
 
 When pruning occurs:
 
-- the act of pruning must be recorded,
-- the chain must remain verifiable,
-- and historical anchors must remain intact.
+- the act of pruning MUST be recorded,
+- the chain MUST remain verifiable,
+- historical anchors MUST remain intact.
 
-Retention must not erase accountability.
+Retention policies MUST NOT alter historical integrity.
 
 ---
 
-## Legal Implications
+## Scope Limitation
 
-From a legal and regulatory perspective:
+Deletion and gap representation:
 
-- detectable gaps weaken evidence credibility less than silent deletion,
-- explicit absence supports honest testimony,
-- and transparent loss reduces allegations of tampering.
+- do not prove intent,
+- do not establish causation,
+- do not guarantee legal sufficiency.
 
-An incomplete but honest record is stronger than a complete but falsified one.
+They preserve structural transparency only.
 
 ---
 
 ## Summary
 
-Deletion without trace is indistinguishable from fraud.
+Deletion without trace collapses integrity.
 
-This architecture ensures that:
+CVS ensures that:
 
-- absence is visible,
-- loss is documented,
-- and erasure cannot be hidden.
+- absence is detectable,
+- interruption is visible,
+- modification leaves evidence.
 
-Gaps tell stories too.
+A visible gap is acceptable.  
+An invisible deletion is not.
