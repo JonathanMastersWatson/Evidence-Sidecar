@@ -1,8 +1,22 @@
 # Disclosure Kernel
 
-This document defines the **Disclosure Kernel**: the minimal, constrained mechanism by which evidence may be revealed without exposing systems, payloads, or irrelevant data.
+This document defines the Disclosure Kernel within the
+Cryptographic Verification Sidecar (CVS) specification.
 
-Selective disclosure is mandatory.
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If conflict exists, the canonical specification governs.
+
+This document is normative.
+
+The Disclosure Kernel is the minimal, constrained mechanism by which
+evidence may be revealed without exposing systems, payloads,
+or irrelevant data.
+
+Selective disclosure is required for CVS-Conforming implementations.
 
 ---
 
@@ -11,24 +25,24 @@ Selective disclosure is mandatory.
 The Disclosure Kernel exists to:
 
 - enable transparency without overexposure,
-- satisfy legal, regulatory, or contractual inquiries,
-- and preserve system autonomy and confidentiality.
+- support structured inquiry,
+- preserve system autonomy and confidentiality.
 
-It prevents evidence systems from becoming de facto surveillance or data-leak mechanisms.
+It prevents evidence systems from becoming bulk export or surveillance mechanisms.
 
 ---
 
 ## Disclosure Is Computed, Not Dumped
 
-Evidence must not be disclosed wholesale.
+Evidence MUST NOT be disclosed wholesale.
 
-Disclosure under this architecture is:
+Disclosure MUST be:
 
 - scoped to a specific inquiry,
 - limited to relevant evidence paths,
-- and produced through computation over stored evidence.
+- produced through computation over stored evidence.
 
-Bulk export of raw logs is prohibited.
+Unbounded raw log export is non-conformant.
 
 ---
 
@@ -36,135 +50,152 @@ Bulk export of raw logs is prohibited.
 
 The Disclosure Kernel defines:
 
-- what may be disclosed,
-- how disclosure is generated,
-- and what must remain hidden.
+- what evidence structures may be disclosed,
+- how disclosure artifacts are generated,
+- what remains outside scope.
 
 It does not define:
-- who may request disclosure,
-- how requests are authorized,
-- or how disclosed evidence is interpreted.
 
-Those concerns are external.
+- who may request disclosure,
+- how authorization is determined,
+- how disclosed evidence is interpreted.
+
+Those concerns remain external to CVS.
 
 ---
 
 ## Minimal Revelation Principle
 
-For any disclosure request, the system must reveal:
+For any disclosure request, the system MUST reveal:
 
 - the smallest set of Evidence Objects necessary,
 - the minimal temporal window required,
-- and only the fields relevant to the inquiry.
+- only fields structurally relevant to the inquiry.
 
-No additional context should be included by default.
+Additional context MUST NOT be included by default.
 
 ---
 
 ## Evidence Path Extraction
 
-Disclosure operates by extracting **evidence paths**, defined as:
+Disclosure operates by extracting evidence paths, defined as:
 
 - a contiguous sequence of Evidence Objects,
 - bounded by explicit start and end conditions,
 - including any gaps within that interval.
 
-Evidence paths must preserve:
+Extracted paths MUST preserve:
+
 - ordering,
 - chain integrity,
-- and observable absence.
+- detectable absence.
 
 ---
 
 ## Proof Without Payload
 
-Disclosed evidence must not include:
+Disclosed evidence MUST NOT include:
 
 - original content payloads,
-- proprietary data,
+- proprietary business data,
 - personal data,
-- or system internals.
+- system internals.
 
 Verification relies on:
+
 - hashes,
 - timestamps,
-- signatures,
-- and external anchors.
+- attestations,
+- settlement anchors (if present).
 
-Payloads may be referenced but not revealed.
+Payloads MAY be referenced but MUST NOT be embedded.
 
 ---
 
 ## Context Without Interpretation
 
-The Disclosure Kernel may provide:
+The Disclosure Kernel MAY provide:
 
 - structural context (ordering, continuity),
 - cryptographic context (hashes, signatures),
-- and timing context.
+- timing context.
 
-It must not provide:
-- analysis,
-- conclusions,
-- or narrative framing.
+It MUST NOT provide:
 
-Interpretation is external.
+- analytical conclusions,
+- narrative framing,
+- assertions of correctness.
+
+Interpretation remains external.
 
 ---
 
 ## Disclosure Formats
 
-Disclosed evidence must be provided in:
+Disclosed evidence MUST be provided in:
 
 - deterministic formats,
-- with stable canonicalization,
-- and machine-verifiable structure.
+- stable canonicalized structures,
+- machine-verifiable representations.
 
-Human-readable representations are secondary.
+Human-readable output MAY be included but is secondary.
 
 ---
 
 ## Disclosure of Gaps
 
-Gaps within the disclosed interval must be included.
+Gaps within the disclosed interval MUST be included.
 
-Disclosure must never:
+Disclosure MUST NOT:
+
 - smooth over interruptions,
 - imply continuity where none exists,
-- or hide absence.
+- conceal absence.
 
-A disclosed gap is preferable to an implied record.
+A visible gap preserves integrity.
 
 ---
 
 ## Replay Resistance
 
-Disclosed evidence must be bound to:
+Disclosed evidence SHOULD be bound to:
 
-- the specific request,
+- a specific request context,
 - a defined time window,
-- and a unique disclosure instance.
+- a unique disclosure instance.
 
-This prevents replay or misuse of disclosures in unrelated contexts.
+Binding prevents reuse outside its intended scope.
 
 ---
 
 ## Auditability of Disclosure
 
-The act of disclosure itself must be:
+The act of disclosure SHOULD be:
 
 - observable,
 - recordable,
-- and auditable.
+- auditable.
 
-Disclosure events should generate their own Evidence Objects or records.
+Disclosure events MAY generate their own Evidence Objects.
+
+---
+
+## Scope Limitation
+
+The Disclosure Kernel:
+
+- does not guarantee regulatory sufficiency,
+- does not determine admissibility,
+- does not enforce compliance.
+
+It governs structural evidence extraction only.
 
 ---
 
 ## Summary
 
-The Disclosure Kernel allows systems to be transparent **without becoming exposed**.
+The Disclosure Kernel enables precision transparency.
 
-It reveals exactly what is necessary, nothing more.
+It reveals what is necessary, and nothing beyond that boundary.
 
-Transparency is a precision instrument, not a flood.
+Transparency is bounded by design.
