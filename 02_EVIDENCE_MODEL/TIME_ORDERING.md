@@ -1,8 +1,19 @@
 # Time Ordering
 
-This document defines the requirements for time representation and ordering within the evidence sidecar architecture.
+This document defines the requirements for time representation and ordering
+within the Cryptographic Verification Sidecar (CVS) specification.
 
-Correct time ordering is essential for reconstructing events, resolving disputes, and detecting manipulation.
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If conflict exists, the canonical specification governs.
+
+This document is normative.
+
+Correct time ordering is essential for reconstructing sequences,
+detecting manipulation, and preserving chain integrity.
 
 ---
 
@@ -11,64 +22,69 @@ Correct time ordering is essential for reconstructing events, resolving disputes
 Time ordering ensures that:
 
 - events can be placed in a coherent sequence,
-- causality can be inferred,
-- and contradictions can be identified.
+- ordering contradictions can be detected,
+- reordering attempts are observable.
 
-Absolute precision is less important than **consistency and disclosure**.
+Absolute precision is less important than consistency and disclosure.
 
 ---
 
 ## Observation Time vs Event Time
 
-The sidecar records **observation time**, not event intent.
+CVS records **observation time**, not event intent.
 
 - Observation time is when the sidecar observes the event.
 - Event time may be declared by the originating system.
 
-These two timestamps must not be conflated.
+These timestamps MUST NOT be conflated.
 
-When event time is recorded:
-- it must be clearly labeled as declared,
-- and treated as untrusted input.
+If event time is recorded:
+
+- it MUST be clearly labeled as declared,
+- it MUST be treated as untrusted input.
+
+Observation time governs ordering.
 
 ---
 
 ## Timestamp Requirements
 
-Every Evidence Object must include:
+Every Evidence Object MUST include:
 
 - a timestamp with defined resolution,
 - expressed in a standard, unambiguous format,
 - derived from a disclosed clock source.
 
-The timestamp must be monotonic within a chain.
+Timestamps MUST be monotonic within a chain.
 
 ---
 
 ## Clock Sources
 
-The sidecar must disclose its clock source, which may include:
+The sidecar MUST disclose its clock source.
+
+This MAY include:
 
 - hardware time sources,
 - network time protocols,
-- or platform-provided clocks.
+- platform-provided clocks.
 
-Clock accuracy, drift, and synchronization state must be observable.
+Clock accuracy, drift, and synchronization state SHOULD be observable.
 
 Perfect time is not required.  
-Honest time is required.
+Transparent time is required.
 
 ---
 
 ## Ordering Guarantees
 
-The sidecar must guarantee:
+The sidecar MUST guarantee:
 
 - strict ordering of Evidence Objects within its own chain,
 - consistency between ordering and chain references,
-- and detection of reordering attempts.
+- detection of reordering attempts.
 
-Global ordering across multiple sidecars is not assumed.
+Global ordering across independent sidecars is not assumed.
 
 ---
 
@@ -76,23 +92,23 @@ Global ordering across multiple sidecars is not assumed.
 
 When multiple events occur concurrently:
 
-- ordering may be arbitrary but deterministic,
-- tie-breaking rules must be documented,
-- and concurrency must not be hidden.
+- ordering MAY be arbitrary but MUST be deterministic,
+- tie-breaking rules MUST be documented,
+- concurrency MUST NOT be hidden.
 
-The sidecar must not fabricate causal relationships.
+The sidecar MUST NOT fabricate causal relationships.
 
 ---
 
 ## Clock Drift and Desynchronization
 
-Clock drift or loss of synchronization must be:
+Clock drift or loss of synchronization MUST be:
 
 - detectable,
-- recorded in evidence,
-- and disclosed upon verification.
+- represented in evidence,
+- observable during verification.
 
-Silently corrected timestamps are prohibited.
+Silently rewriting timestamps is non-conformant.
 
 ---
 
@@ -100,30 +116,30 @@ Silently corrected timestamps are prohibited.
 
 When observation is interrupted:
 
-- time gaps must be observable,
-- missing intervals must not be interpolated,
-- and continuity must not be implied.
+- time gaps MUST be observable,
+- missing intervals MUST NOT be interpolated,
+- continuity MUST NOT be inferred.
 
 Absence is part of the record.
 
 ---
 
-## Legal and Forensic Considerations
+## Scope Limitation
 
-In legal contexts, time ordering:
+Time ordering:
 
-- supports reconstruction of sequences,
-- reveals inconsistencies,
-- and exposes manipulation.
+- does not prove causation,
+- does not establish intent,
+- does not guarantee external synchronization accuracy.
 
-Disclosed uncertainty is preferable to false precision.
+It preserves internal sequence integrity only.
 
 ---
 
 ## Summary
 
-Time ordering is not about perfection.
+Time ordering is not about precision.
 
 It is about consistency, transparency, and detectability.
 
-A timeline that admits uncertainty is stronger than one that hides it.
+A disclosed uncertainty is stronger than fabricated certainty.
