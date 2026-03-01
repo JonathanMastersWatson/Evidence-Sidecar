@@ -1,40 +1,47 @@
-# Cryptography Considerations
+# CVS Cryptography Considerations
 
-This document describes cryptographic considerations for implementations of the Evidence Sidecar Reference Architecture.
+This document describes cryptographic considerations for implementations of the
+Cryptographic Verification Sidecar (CVS) specification.
 
-It defines **minimum properties**, not fixed algorithms.
+The canonical CVS specification is defined by:
 
-This document is non-normative.
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If conflict exists, the canonical specification governs.
+
+This document defines minimum properties, not fixed algorithms.
+It is normative where RFC-2119 language appears.
 
 ---
 
 ## Purpose
 
-Cryptography in this architecture exists to:
+Cryptography in CVS exists to:
 
 - ensure integrity,
 - enable independent verification,
 - and make tampering detectable.
 
-It does not provide confidentiality, identity, or authorization.
+It does not provide confidentiality, identity, authorization, or correctness guarantees.
 
 ---
 
 ## Design Philosophy
 
-Cryptographic choices must prioritize:
+Cryptographic choices should prioritize:
 
 - longevity over novelty,
 - standardization over customization,
-- and verifiability over performance tricks.
+- and verifiability over performance shortcuts.
 
-Custom cryptography is prohibited.
+Cryptographic mechanisms must be publicly reviewable and independently verifiable.
 
 ---
 
 ## Hash Functions
 
-Hash functions used for Evidence Objects and chaining must:
+Hash functions used for Evidence Objects and chaining MUST:
 
 - be collision-resistant,
 - be widely standardized,
@@ -42,26 +49,29 @@ Hash functions used for Evidence Objects and chaining must:
 - and be suitable for long-term verification.
 
 Examples of acceptable classes include:
+
 - SHA-2 family
 - SHA-3 family
 
-Specific algorithm choice must be disclosed.
+Specific algorithm choice MUST be disclosed.
 
 ---
 
 ## Digital Signatures and Attestation
 
-Attestation mechanisms must:
+Attestation mechanisms MUST:
 
 - bind Evidence Objects to a witnessing entity,
 - be independently verifiable,
-- and support key rotation.
+- support key rotation,
+- preserve long-term auditability.
 
 Acceptable classes include:
+
 - standard asymmetric digital signatures
 - hardware-backed signing where available
 
-Signature schemes must be documented.
+Signature schemes MUST be documented.
 
 ---
 
@@ -69,66 +79,65 @@ Signature schemes must be documented.
 
 Before hashing or signing:
 
-- Evidence Objects must be serialized canonically
-- field ordering must be deterministic
-- encoding ambiguity must be eliminated
+- Evidence Objects MUST be serialized canonically,
+- field ordering MUST be deterministic,
+- encoding ambiguity MUST be eliminated.
 
-Canonicalization rules are part of verifiability.
+Canonicalization is part of verifiability.
 
 ---
 
 ## Key Management
 
-Key management must ensure that:
+Key management MUST ensure:
 
 - keys are protected against unauthorized use,
 - compromise is detectable,
 - rotation events are observable,
-- and historical evidence remains verifiable.
+- historical evidence remains verifiable.
 
-Key compromise does not invalidate past evidence, but must be disclosed.
+Key compromise does not invalidate prior evidence,
+but rotation events MUST be transparent.
 
 ---
 
 ## Algorithm Agility
 
-Implementations must support:
+Implementations MUST support:
 
 - future algorithm replacement,
 - coexistence of multiple algorithms,
-- and verification of historical evidence created under older algorithms.
+- verification of historical evidence created under prior algorithms.
 
 Hard-coding a single algorithm indefinitely is discouraged.
 
 ---
 
-## What Cryptography Does Not Do
+## Scope Limitation
 
-Cryptography in this architecture does not:
+Cryptography in CVS does not:
 
 - prove correctness,
 - establish intent,
-- prevent bad behavior,
-- or guarantee trustworthiness.
+- prevent misconduct,
+- guarantee regulatory compliance,
+- or replace legal review.
 
 It proves integrity and existence only.
 
 ---
 
-## Compliance and Regulation
+## Regulatory Considerations
 
-Implementations must comply with:
+Implementations are responsible for compliance with applicable cryptographic
+regulations and export controls.
 
-- applicable cryptographic regulations,
-- export controls,
-- and jurisdictional requirements.
-
-This architecture does not override local law.
+This architecture does not override jurisdictional law.
 
 ---
 
 ## Summary
 
-Cryptography here is structural, not magical.
+Cryptography in CVS is structural.
 
-Its job is to make lies expensive and tampering visible — nothing more.
+Its function is to make tampering visible and independently detectable — nothing more.
