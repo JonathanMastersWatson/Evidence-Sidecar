@@ -1,8 +1,18 @@
 # Attestation
 
-This document defines the scope, limits, and meaning of attestations produced by a compliant evidence sidecar.
+This document defines the scope, limits, and meaning of attestations
+within the Cryptographic Verification Sidecar (CVS) specification.
 
-Attestation confirms observation and recording.  
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If conflict exists, the canonical specification governs.
+
+This document is normative.
+
+Attestation confirms observation and recording.
 It does not confer correctness, legitimacy, or intent.
 
 ---
@@ -13,24 +23,28 @@ Attestation exists to:
 
 - bind Evidence Objects to a specific witness,
 - confirm that an observation occurred,
-- and enable independent verification of integrity.
+- enable independent verification of integrity.
 
-It does not exist to:
+It does not:
+
 - validate outcomes,
 - approve behavior,
-- or assert truth.
+- assert correctness,
+- enforce policy.
+
+Interpretation remains external.
 
 ---
 
 ## What Is Being Attested
 
-An attestation by the sidecar asserts only that:
+An attestation asserts only that:
 
 - a specific event or segment was observed,
 - at a specific observation time,
 - and recorded according to the disclosed process.
 
-Nothing more.
+Nothing beyond that scope is implied.
 
 ---
 
@@ -41,62 +55,68 @@ The sidecar does not attest that:
 - the observed event was correct,
 - the event was legitimate,
 - the system behaved properly,
-- or the outcome was valid.
+- the outcome was valid.
 
-Interpretation is external.
+Attestation binds process, not meaning.
 
 ---
 
 ## Attesting Entity
 
-Each attestation must identify:
+Each attestation MUST identify:
 
 - the witnessing sidecar instance,
 - its cryptographic identity,
-- and its operational context.
+- its operational context (where applicable).
 
-Identity mechanisms must be verifiable and disclosed.
+Identity mechanisms MUST be independently verifiable and documented.
 
 ---
 
 ## Attestation Methods
 
-Attestation may be implemented using:
+Attestation MAY be implemented using:
 
 - digital signatures,
 - hardware-backed keys,
-- or other cryptographic mechanisms.
+- other standardized cryptographic mechanisms.
 
-The chosen method must:
+The chosen method MUST:
+
 - be secure,
 - be documented,
-- and permit independent verification.
+- permit independent verification.
 
-Proprietary or undisclosed methods are prohibited.
+Undocumented or opaque mechanisms are non-conformant.
 
 ---
 
 ## Key Management
 
-Key management practices must ensure that:
+Key management MUST ensure that:
 
 - keys are protected from unauthorized use,
 - compromise is detectable,
-- and rotation events are observable.
+- rotation events are observable.
 
-Key compromise does not invalidate historical evidence, but must be disclosed.
+If compromise occurs:
+
+- the event MUST be recorded,
+- subsequent attestations MUST use new keys.
+
+Historical evidence remains verifiable, though trust context may change.
 
 ---
 
 ## Attestation Scope
 
-Attestations must be:
+Attestations MUST be:
 
-- scoped to individual Evidence Objects or batches,
+- scoped to individual Evidence Objects or defined batches,
 - linked to the hash chain,
-- and unambiguous in meaning.
+- unambiguous in meaning.
 
-Broad or vague attestations are disallowed.
+Overbroad or undefined attestations are non-conformant.
 
 ---
 
@@ -104,25 +124,23 @@ Broad or vague attestations are disallowed.
 
 If a witnessing key is compromised:
 
-- the compromise must be recorded,
-- affected attestations must be flagged,
-- and subsequent evidence must use new keys.
+- the compromise MUST be represented in evidence,
+- affected attestations MUST be identifiable,
+- chain integrity MUST remain intact.
 
-Historical evidence remains verifiable but may be weighed accordingly.
+Attestation continuity must remain verifiable.
 
 ---
 
-## Legal Interpretation
+## Scope Limitation
 
-In legal contexts, attestations serve as:
+Attestation:
 
-- proof of observation,
-- proof of process,
-- and proof of integrity.
+- does not prove correctness,
+- does not establish intent,
+- does not guarantee regulatory sufficiency.
 
-They do not serve as proof of correctness or intent.
-
-This limitation is intentional and protective.
+It proves observation and integrity only.
 
 ---
 
@@ -130,10 +148,10 @@ This limitation is intentional and protective.
 
 Attestation binds evidence to a witness without granting authority.
 
-It answers the question:
+It answers:
 
 “Who observed this, and how was it recorded?”
 
 It does not answer:
 
-“Was this right?”
+“Was this correct?”
