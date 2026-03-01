@@ -1,8 +1,19 @@
 # Query Scoping
 
-This document defines how disclosure queries are scoped, bounded, and constrained within the evidence sidecar architecture.
+This document defines how disclosure queries are scoped, bounded, and constrained
+within the Cryptographic Verification Sidecar (CVS) specification.
 
-Query scoping ensures that disclosure remains precise, proportional, and non-invasive.
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If conflict exists, the canonical specification governs.
+
+This document is normative.
+
+Query scoping ensures that disclosure remains precise, proportional,
+and structurally bounded.
 
 ---
 
@@ -12,39 +23,44 @@ Query scoping exists to:
 
 - prevent over-disclosure,
 - limit evidence exposure to relevant material,
-- and protect systems from exploratory or abusive inquiries.
+- preserve system autonomy,
+- maintain structural proportionality.
 
-Disclosure without scope is indistinguishable from surveillance.
+Disclosure without scope collapses the minimal revelation boundary.
 
 ---
 
 ## Scope as a First-Class Constraint
 
-Every disclosure request must be explicitly scoped.
+Every disclosure request MUST be explicitly scoped.
 
-A request without scope must not be fulfilled.
+A request lacking scope MUST NOT be fulfilled.
 
 Scope defines:
-- what evidence is eligible for disclosure,
-- what evidence is excluded,
-- and the boundaries of interpretation.
+
+- which evidence is eligible for disclosure,
+- which evidence is excluded,
+- the boundaries of structural extraction.
+
+Scope governs eligibility, not interpretation.
 
 ---
 
 ## Required Scope Dimensions
 
-A valid disclosure query must specify, at minimum:
+A valid disclosure query MUST specify, at minimum:
 
 ### 1. Temporal Scope
 
 The time window to which the request applies.
 
-Temporal scope must:
-- define clear start and end bounds,
-- align with recorded observation time,
-- and include any gaps within that interval.
+Temporal scope MUST:
 
-Open-ended temporal queries are prohibited.
+- define explicit start and end bounds,
+- align with recorded observation time,
+- include any gaps within that interval.
+
+Open-ended temporal queries are non-conformant.
 
 ---
 
@@ -52,12 +68,14 @@ Open-ended temporal queries are prohibited.
 
 The specific evidence chain, stream, or source under inquiry.
 
-This may include:
-- a system identifier,
-- a channel or process identifier,
-- or a sidecar instance reference.
+This MAY include:
 
-Global or system-wide queries are disallowed by default.
+- system identifiers,
+- channel or process identifiers,
+- sidecar instance references.
+
+Unbounded global queries SHOULD be rejected unless explicitly justified
+and structurally permitted.
 
 ---
 
@@ -65,92 +83,94 @@ Global or system-wide queries are disallowed by default.
 
 The classes of Evidence Objects to be disclosed.
 
-This may include:
+This MAY include:
+
 - specific event types,
 - segment-level evidence,
-- or attestation records.
+- attestation records.
 
-Unbounded evidence-type queries are prohibited.
+Unbounded evidence-type queries are non-conformant.
 
 ---
 
 ## Optional Scope Dimensions
 
-Additional scope constraints may include:
+Additional scope constraints MAY include:
 
 - sidecar instance identifiers,
 - specific hash prefixes,
 - settlement anchor references,
-- or known gap markers.
+- known gap markers.
 
-Optional constraints further reduce disclosure surface area.
+Optional constraints further narrow disclosure boundaries.
 
 ---
 
-## Excluded Scope
+## Explicit Exclusion
 
-Queries must explicitly exclude:
+Queries SHOULD explicitly exclude:
 
 - unrelated systems,
 - unrelated time windows,
 - unrelated evidence classes,
-- and non-relevant metadata.
+- non-relevant metadata.
 
-Exclusion is as important as inclusion.
+Exclusion clarifies boundaries.
 
 ---
 
 ## Rejection of Overbroad Queries
 
-The Disclosure Kernel must reject queries that are:
+The Disclosure Kernel MUST reject queries that are:
 
 - vague,
 - unbounded,
-- exploratory,
-- or disproportionate to the stated purpose.
+- exploratory in structure,
+- structurally disproportionate.
 
-Rejection is a valid and expected outcome.
+Rejection is a valid structural outcome.
 
 ---
 
 ## Scope Validation
 
-Before disclosure, the system must:
+Before disclosure, the system MUST:
 
 - validate scope completeness,
-- confirm scope feasibility,
-- and record the scope parameters.
+- confirm structural feasibility,
+- record the scope parameters as part of the disclosure event.
 
-Invalid or incomplete scopes must not be silently corrected.
+Invalid or incomplete scopes MUST NOT be silently expanded.
 
 ---
 
 ## Scope Transparency
 
-Disclosed evidence must include:
+Disclosed evidence SHOULD include:
 
-- the exact scope definition used,
-- confirmation that no additional evidence was considered,
-- and disclosure of any scope limitations.
+- the exact scope definition applied,
+- confirmation that extraction respected defined boundaries,
+- any structural limitations encountered.
 
-This allows recipients to assess completeness.
+This enables independent assessment of completeness.
 
 ---
 
-## Abuse Resistance
+## Scope Limitation
 
-Query scoping serves as a defense against:
+Query scoping:
 
-- fishing expeditions,
-- mass extraction attempts,
-- and coercive discovery tactics.
+- does not determine authorization policy,
+- does not evaluate legal proportionality,
+- does not assess legitimacy of requesters.
 
-The architecture prioritizes proportionality over convenience.
+It enforces structural extraction boundaries only.
 
 ---
 
 ## Summary
 
-Query scoping ensures that disclosure answers the question asked — and nothing else.
+Query scoping ensures that disclosure answers the defined question —
+and nothing beyond it.
 
-Precision protects both transparency and autonomy.
+Precision preserves both transparency and autonomy.
