@@ -1,8 +1,20 @@
 # Ledger Requirements
 
-This document defines the technical and operational requirements for any distributed ledger used as a **public settlement and receipt layer** for evidence produced by a compliant sidecar.
+This document defines the technical and operational requirements
+for any distributed ledger used as a public settlement and receipt layer
+within the Cryptographic Verification Sidecar (CVS) specification.
 
-The ledger exists solely to provide independent, verifiable anchoring of evidence integrity.
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If conflict exists, the canonical specification governs.
+
+This document is normative.
+
+The ledger exists solely to provide independent, verifiable anchoring
+of evidence integrity.
 
 It does not execute logic, store payloads, or confer authority.
 
@@ -12,10 +24,10 @@ It does not execute logic, store payloads, or confer authority.
 
 The settlement layer exists to:
 
-- provide a public, neutral point of reference,
+- provide a public, neutral reference point,
 - anchor evidence chains beyond local control,
 - enable third-party verification,
-- and make tampering or retroactive alteration detectable.
+- make tampering or retroactive alteration detectable.
 
 It does not participate in execution or interpretation.
 
@@ -23,172 +35,168 @@ It does not participate in execution or interpretation.
 
 ## Required Ledger Properties
 
-Any ledger used for settlement **must** satisfy all of the following properties.
-
-Failure to satisfy any requirement disqualifies the ledger.
+Any ledger used for CVS settlement MUST satisfy the following properties.
 
 ---
 
 ### 1. Deterministic Finality
 
-The ledger must provide deterministic finality.
+The ledger MUST provide deterministic finality.
 
 This means:
 
 - transactions, once confirmed, are final,
-- no probabilistic reorganization is possible,
-- and confirmation semantics are clear and consistent.
+- confirmation semantics are clearly defined,
+- historical reorganization is not expected under normal operation.
 
-Probabilistic finality is insufficient for legal and regulatory evidence.
+Probabilistic confirmation models are not sufficient for anchoring integrity guarantees.
 
 ---
 
 ### 2. Predictable Settlement Cost
 
-Settlement cost must be:
+Settlement cost MUST be:
 
-- low,
-- stable,
-- and predictable over time.
+- bounded,
+- stable over time,
+- reasonably predictable.
 
-Evidence systems cannot tolerate:
-
-- fee auctions,
-- congestion-driven price spikes,
-- or adversarial transaction ordering.
-
-Unbounded or volatile costs undermine reliability.
+Evidence anchoring cannot rely on fee auctions,
+congestion-driven price spikes,
+or unbounded transaction costs.
 
 ---
 
 ### 3. Public Verifiability
 
-The ledger must be:
+The ledger MUST be:
 
 - publicly accessible,
 - independently verifiable,
-- and not controlled by a single operator.
+- not dependent on a single operator for validation.
 
-Verification must not require permission.
+Verification MUST NOT require privileged access.
 
 ---
 
-### 4. Minimal Latency for Receipt
+### 4. Bounded Confirmation Latency
 
-The ledger must support:
+The ledger MUST provide:
 
-- near-immediate transaction acceptance,
 - bounded confirmation time,
-- and rapid receipt availability.
+- reliable receipt generation,
+- timely availability of transaction identifiers.
 
-Settlement latency affects evidence freshness but must not block execution.
+Settlement latency affects freshness,
+but MUST NOT block execution.
 
 ---
 
 ### 5. No Execution Dependency
 
-The ledger must not:
+The ledger MUST NOT:
 
 - execute application logic,
 - enforce policy,
-- or affect system behavior.
+- influence system behavior.
 
-It exists purely as a receipt layer.
+It functions strictly as a receipt layer.
 
 ---
 
 ### 6. No Payload Storage Requirement
 
-The ledger must not require:
+The ledger MUST NOT require:
 
-- storage of payload data,
-- storage of content,
-- or storage of sensitive information.
+- storage of original payload data,
+- storage of content bodies,
+- storage of sensitive information.
 
-Only compact cryptographic commitments may be recorded.
+Only compact cryptographic commitments MAY be recorded.
 
 ---
 
 ### 7. Resistance to Manipulation
 
-The ledger must resist:
+The ledger SHOULD demonstrate resistance to:
 
 - transaction censorship,
-- reordering attacks,
-- front-running,
-- or economic manipulation.
+- ordering manipulation,
+- front-running attacks,
+- economic coercion affecting anchoring.
 
-Evidence anchoring must not be gamed.
+Anchoring reliability depends on structural predictability.
 
 ---
 
-### 8. Legal Clarity
+### 8. Governance Transparency
 
-The ledger must have:
+The ledger SHOULD provide:
 
-- a clear legal posture,
-- predictable jurisdictional interpretation,
-- and no ambiguous governance controls.
+- documented governance processes,
+- predictable rule evolution,
+- observable consensus rules.
 
-Opaque or discretionary governance undermines evidentiary value.
+Opaque discretionary control weakens anchoring neutrality.
 
 ---
 
 ## Settlement Frequency
 
-Evidence chains may be settled:
+Evidence chains MAY be settled:
 
 - periodically,
 - in batches,
-- or on defined intervals.
+- at defined intervals.
 
-Settlement frequency must be:
+Settlement frequency MUST be:
 
 - configurable,
 - disclosed,
-- and independent of execution paths.
+- independent of execution paths.
 
 ---
 
 ## Anchoring Semantics
 
-Ledger anchoring must record:
+Ledger anchoring MUST record:
 
-- cryptographic commitments (e.g. Merkle roots),
-- timestamps provided by the ledger,
-- and transaction identifiers.
+- cryptographic commitments (e.g., Merkle roots),
+- ledger-provided timestamps,
+- transaction identifiers.
 
-Anchoring does not validate correctness — only existence.
-
----
-
-## Disallowed Ledger Characteristics
-
-The following characteristics are incompatible with this architecture:
-
-- probabilistic finality
-- volatile fee markets
-- opaque governance
-- smart-contract dependency
-- payload storage requirements
-- execution-layer coupling
+Anchoring proves existence at a point in time.
+It does not validate correctness or meaning.
 
 ---
 
 ## Ledger Neutrality
 
-This repository does not promote or endorse ideologies, assets, or ecosystems.
+CVS does not mandate any specific ledger.
 
-Ledger selection is constrained by technical properties alone.
+Ledger selection is constrained by technical properties.
 
-Any ledger meeting these requirements may be used.
+Any ledger meeting these requirements MAY be used.
+
+---
+
+## Scope Limitation
+
+Ledger requirements:
+
+- do not determine legal admissibility,
+- do not define regulatory sufficiency,
+- do not establish governance policy.
+
+They define structural anchoring properties only.
 
 ---
 
 ## Summary
 
-The settlement layer is a notary, not a computer.
+The settlement layer functions as a notary.
 
-It provides receipts, not execution.
+It provides timestamped receipts for cryptographic commitments.
 
-If a ledger cannot behave predictably, it cannot anchor evidence.
+If a ledger cannot behave predictably,
+it cannot reliably anchor evidence.
