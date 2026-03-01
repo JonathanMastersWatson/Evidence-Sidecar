@@ -1,8 +1,20 @@
 # Finality and Receipts
 
-This document defines the meaning of settlement finality and the role of ledger receipts within the evidence sidecar architecture.
+This document defines the meaning of settlement finality
+and the role of ledger receipts within the
+Cryptographic Verification Sidecar (CVS) specification.
 
-Finality provides proof of existence, not proof of correctness.
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If conflict exists, the canonical specification governs.
+
+This document is normative.
+
+Finality provides proof of existence,
+not proof of correctness.
 
 ---
 
@@ -10,9 +22,9 @@ Finality provides proof of existence, not proof of correctness.
 
 Settlement finality exists to:
 
-- establish that evidence existed at a given point in time,
+- establish that a cryptographic commitment existed at a given time,
 - anchor evidence beyond local control,
-- and enable independent verification.
+- enable independent verification.
 
 It does not validate behavior or outcomes.
 
@@ -23,10 +35,11 @@ It does not validate behavior or outcomes.
 Finality is achieved when:
 
 - a cryptographic commitment is accepted by the settlement ledger,
-- the transaction is confirmed under deterministic rules,
-- and the confirmation is publicly verifiable.
+- the transaction is confirmed under deterministic consensus rules,
+- the confirmation is publicly verifiable.
 
-Once final, the receipt is immutable.
+Once confirmed under the ledger’s finality model,
+the receipt is treated as immutable.
 
 ---
 
@@ -35,13 +48,15 @@ Once final, the receipt is immutable.
 Ledger finality proves that:
 
 - a specific cryptographic commitment existed,
-- no later than the settlement time,
+- no later than the settlement timestamp,
 - and was recorded publicly.
 
-It proves nothing about:
-- the meaning of the evidence,
-- the correctness of events,
-- or the legitimacy of outcomes.
+It does not prove:
+
+- semantic meaning of the evidence,
+- correctness of events,
+- legitimacy of outcomes,
+- intent or compliance.
 
 ---
 
@@ -51,91 +66,91 @@ A receipt consists of:
 
 - the settlement transaction identifier,
 - the ledger-provided timestamp,
-- and the committed cryptographic value.
+- the committed cryptographic value.
 
-Receipts are compact, durable, and verifiable.
+Receipts MUST be sufficient for independent retrieval and verification.
 
 ---
 
 ## Receipt Binding
 
-Receipts must be bound to:
+Receipts MUST be bound to:
 
-- specific evidence batches,
+- specific evidence batches or commitments,
 - defined hash chains,
-- and disclosed batching rules.
+- disclosed batching rules.
 
-This binding enables verification of inclusion.
+This binding enables inclusion verification.
 
 ---
 
 ## Independence from Execution
 
-Receipt generation must be:
+Receipt generation MUST be:
 
 - asynchronous,
 - decoupled from execution,
-- and fail-open.
+- fail-open.
 
-Settlement delays do not affect system behavior.
+Settlement delay MUST NOT alter execution behavior.
 
 ---
 
-## Deferred and Retroactive Settlement
+## Deferred Settlement
 
-Evidence may be settled after observation.
+Evidence MAY be settled after observation.
 
-Deferred settlement must:
+Deferred settlement MUST:
 
 - preserve original observation time,
 - record settlement delay,
-- and maintain chain integrity.
+- maintain chain integrity.
 
-Retroactive settlement does not weaken evidence, provided delays are disclosed.
+Delay affects freshness, not structural validity.
 
 ---
 
 ## Verification Workflow
 
-An independent verifier must be able to:
+An independent verifier MUST be able to:
 
 1. retrieve the receipt from the ledger,
 2. recompute the cryptographic commitment,
 3. confirm inclusion and finality,
 4. trace the commitment to disclosed evidence.
 
-Verification must not require trust in the operator.
+Verification MUST NOT require privileged access to the operator.
 
 ---
 
 ## Multiple Receipts
 
-Evidence chains may be anchored:
+Evidence chains MAY be anchored:
 
 - multiple times,
 - at different intervals,
-- or to multiple ledgers.
+- to multiple ledgers.
 
-Multiple receipts strengthen resilience but do not alter semantics.
+Additional receipts increase resilience but do not alter semantics.
 
 ---
 
-## Non-Goals
+## Scope Limitation
 
-Finality does not:
+Finality:
 
-- enforce compliance,
-- assign blame,
-- or certify correctness.
+- does not enforce compliance,
+- does not assign responsibility,
+- does not certify correctness.
 
-It records that something existed, not that it was right.
+It establishes existence at a point in time.
 
 ---
 
 ## Summary
 
-Finality closes the window for silent alteration.
+Finality constrains retroactive alteration.
 
-Receipts transform local evidence into public fact.
+Receipts transform local commitments into publicly verifiable records.
 
-They witness existence — nothing more.
+They witness existence — and nothing beyond that boundary.
