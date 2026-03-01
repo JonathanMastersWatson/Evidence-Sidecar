@@ -19,14 +19,21 @@ It is an architectural constraint set.
 
 ## Canonical Specification (Precedence)
 
-The canonical CVS specification is defined by:
+The canonical CVS specification is defined exclusively by the following documents:
 
-- `CVS_ARCHITECTURE_v2.7.md`
-- `CVS_IMPLEMENTATION_v2.2.md`
+- `/08_CANON/CVS_ARCHITECTURE_v2.7.md`
+- `/08_CANON/CVS_IMPLEMENTATION_v2.2.md`
 
-If any other file in this repository conflicts with the canonical CVS specification above, the canonical files take precedence.
+The cryptographic fingerprints of these files are recorded in:
 
-All other documents in this repository are supporting material and are being updated to align with the canonical CVS specification.
+- `/08_CANON/CANON_HASHES.md`
+
+If any conflict exists between documents in this repository,
+the files in `/08_CANON/` take precedence.
+
+Version numbers are immutable.
+Canonical documents must not be silently modified.
+Subsequent revisions must increment version numbers.
 
 ---
 
