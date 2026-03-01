@@ -1,3 +1,6 @@
+Licensed under the Apache License, Version 2.0.
+See LICENSE and NOTICE for details.
+
 # CVS (Cryptographic Verification Sidecar) — Reference Architecture
 
 This repository defines a **reference architecture for independent, fail-open evidence systems**.
