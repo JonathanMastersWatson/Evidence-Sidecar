@@ -1,122 +1,136 @@
 # Cost and Batching
 
-This document defines how evidence settlement costs are managed, bounded, and optimized through batching.
+This document defines how evidence settlement costs are managed,
+bounded, and optimized through batching within the
+Cryptographic Verification Sidecar (CVS) specification.
 
-The goal is to ensure that evidence anchoring remains economically predictable and operationally sustainable at scale.
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If conflict exists, the canonical specification governs.
+
+This document is normative.
+
+The objective is to ensure that evidence anchoring remains
+economically predictable and operationally sustainable at scale.
 
 ---
 
 ## Purpose
 
-Evidence systems must be economically boring.
+Evidence anchoring must be economically stable.
 
-Costs must be:
+Settlement costs SHOULD be:
+
 - bounded,
 - predictable,
-- and decoupled from system throughput.
+- decoupled from execution throughput.
 
-Batching is the primary mechanism by which this is achieved.
+Batching is the primary mechanism for achieving this separation.
 
 ---
 
 ## Cost Characteristics
 
-Settlement costs must satisfy the following conditions:
+Settlement cost structures SHOULD exhibit the following properties:
 
-- costs are independent of event frequency,
-- costs do not scale linearly with system throughput,
-- costs are immune to congestion-based spikes,
-- and costs are observable and auditable.
+- cost is not directly proportional to individual event frequency,
+- cost scaling remains controlled under high throughput,
+- cost volatility is limited,
+- cost is observable and auditable.
 
-Unbounded costs undermine adoption.
+Unbounded or unpredictable cost structures weaken operational viability.
 
 ---
 
 ## Evidence Batching
 
-Evidence Objects may be aggregated into batches prior to settlement.
+Evidence Objects MAY be aggregated into batches prior to settlement.
 
 Batching involves:
 
 - grouping multiple Evidence Objects,
 - constructing a Merkle tree over the batch,
-- and anchoring the Merkle root to the settlement layer.
+- anchoring the Merkle root to the settlement layer.
 
-Batch composition rules must be disclosed.
+Batch composition rules MUST be documented.
 
 ---
 
 ## Batching Dimensions
 
-Batching may occur along one or more dimensions:
+Batching MAY occur along one or more dimensions:
 
-- time-based (e.g. per minute, per hour),
-- count-based (e.g. every N objects),
-- system-based (e.g. per stream or channel),
-- or facility-based (e.g. per site).
+- time-based (e.g., per interval),
+- count-based (e.g., every N objects),
+- system-based (e.g., per stream or channel),
+- facility-based (e.g., per site).
 
-The chosen strategy must be deterministic.
+The chosen batching strategy MUST be deterministic.
 
 ---
 
 ## Settlement Frequency
 
-Settlement frequency must be:
+Settlement frequency MUST be:
 
 - configurable,
 - documented,
-- and independent of execution paths.
+- independent of execution paths.
 
-Settlement must never be synchronous with system operation.
+Settlement MUST NOT be synchronous with system execution.
 
 ---
 
 ## Cost Attribution
 
-Batch settlement enables cost attribution across:
+Batch settlement MAY enable cost attribution across:
 
 - systems,
 - channels,
 - customers,
-- or organizational units.
+- organizational units.
 
-Attribution must be deterministic and auditable.
+Attribution mechanisms SHOULD be deterministic and auditable.
 
 ---
 
 ## Deferred Settlement
 
-Temporary inability to settle (e.g. ledger unavailability) must not:
+Temporary inability to settle (e.g., ledger unavailability) MUST NOT:
 
 - block evidence generation,
 - interrupt execution,
-- or invalidate local evidence chains.
+- invalidate local evidence chains.
 
-Deferred settlement must be recorded and observable.
+Deferred settlement MUST be observable.
 
 ---
 
 ## Cost Predictability
 
-Predictable settlement cost enables:
+Predictable settlement cost supports:
 
 - budgeting,
-- insurance modeling,
-- and risk pricing.
+- risk modeling,
+- long-term operational planning.
 
-Volatile or adversarial fee mechanisms are incompatible with evidentiary systems.
+Excessive volatility in anchoring cost may require batching adjustment
+or alternative ledger selection.
 
 ---
 
 ## Transparency of Costs
 
-Settlement costs must be:
+Settlement costs SHOULD be:
 
 - measurable,
 - attributable,
-- and reportable.
+- reportable.
 
-Hidden costs or opaque fee structures undermine trust.
+Opaque fee structures reduce anchoring transparency.
 
 ---
 
@@ -124,16 +138,20 @@ Hidden costs or opaque fee structures undermine trust.
 
 Batching does not:
 
-- reduce evidentiary integrity,
-- alter hash chaining semantics,
-- or obscure individual Evidence Objects.
+- alter evidentiary integrity,
+- modify hash chaining semantics,
+- obscure individual Evidence Objects.
 
 Batching is an economic optimization only.
 
 ---
 
-## Summary
+## Scope Limitation
 
-Batching transforms evidence anchoring from a variable expense into a fixed operational cost.
+Cost and batching rules:
 
-Economic predictability is a prerequisite for trust infrastructure.
+- do not determine ledger selection,
+- do not define pricing policy,
+- do not guarantee economic outcomes.
+
+They define structural decoupling between execution and anchoring cost.
