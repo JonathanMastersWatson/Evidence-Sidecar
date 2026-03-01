@@ -1,8 +1,17 @@
 # Evidence Object
 
-This document defines the canonical **Evidence Object** produced by a compliant evidence sidecar.
+This document defines the canonical **Evidence Object** within the
+Cryptographic Verification Sidecar (CVS) specification.
 
-The Evidence Object is the minimal, structured representation of what occurred, when it occurred, and how it can be independently verified.
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If conflict exists, the canonical specification governs.
+
+The Evidence Object is the minimal, structured representation of what occurred,
+when it occurred, and how it can be independently verified.
 
 It contains no payload data and confers no authority.
 
@@ -15,21 +24,23 @@ The Evidence Object exists to:
 - represent observed events in a verifiable form,
 - preserve temporal ordering,
 - enable detection of omission or tampering,
-- and support selective disclosure.
+- support selective disclosure.
 
 It does not exist to:
+
 - store content,
 - encode business logic,
-- or convey interpretation.
+- convey interpretation,
+- assert correctness or legitimacy.
 
 ---
 
 ## Core Properties
 
-Every Evidence Object **must** satisfy the following properties:
+Every CVS-Conforming Evidence Object MUST satisfy the following properties:
 
 1. **Immutability**  
-   Once finalized, the object cannot be altered without detection.
+   Once finalized, the object MUST NOT be altered without detection.
 
 2. **Minimality**  
    It contains only what is necessary to prove existence, order, and integrity.
@@ -41,22 +52,23 @@ Every Evidence Object **must** satisfy the following properties:
    It may be chained, aggregated, or batched with other objects.
 
 5. **Non-Authoritative**  
-   It records facts without asserting correctness or legitimacy.
+   It records observable facts without asserting correctness or legality.
 
 ---
 
 ## Required Fields
 
-Each Evidence Object must contain, at minimum, the following fields:
+Each Evidence Object MUST contain, at minimum, the following fields:
 
 ### 1. Evidence Identifier
 
-A unique identifier derived from the object’s content, typically via cryptographic hashing.
+A unique identifier derived from the object’s canonicalized content.
 
-This identifier must:
+This identifier MUST:
+
 - be deterministic,
 - be collision-resistant,
-- and be reproducible by independent verifiers.
+- be reproducible by independent verifiers.
 
 ---
 
@@ -64,12 +76,13 @@ This identifier must:
 
 A timestamp indicating when the event was observed by the sidecar.
 
-Requirements:
-- sourced from a synchronized clock,
-- expressed in a standard format,
-- monotonic within a chain.
+It MUST:
 
-Clock source and precision must be disclosed.
+- be sourced from a synchronized clock,
+- be expressed in a standard format,
+- be monotonic within a chain.
+
+Clock source and precision SHOULD be disclosed.
 
 ---
 
@@ -77,13 +90,14 @@ Clock source and precision must be disclosed.
 
 A concise descriptor of the observed event.
 
-This may include:
+This MAY include:
+
 - event type,
 - source system identifier,
 - stream or channel identifier,
-- or protocol-level metadata.
+- protocol-level metadata.
 
-Descriptors must not contain payload data.
+Descriptors MUST NOT contain payload data.
 
 ---
 
@@ -91,12 +105,13 @@ Descriptors must not contain payload data.
 
 A cryptographic hash representing the observed event or segment.
 
-The hashing strategy:
-- must be disclosed,
-- must be deterministic,
-- and must permit independent recomputation.
+The hashing strategy MUST:
 
-Full payloads must not be included.
+- be disclosed,
+- be deterministic,
+- permit independent recomputation.
+
+Full payloads MUST NOT be embedded in the Evidence Object.
 
 ---
 
@@ -106,7 +121,7 @@ A reference to the preceding Evidence Object in the sequence.
 
 This creates a tamper-evident chain.
 
-Missing references indicate observable gaps.
+Missing references MUST result in detectable gaps.
 
 ---
 
@@ -115,25 +130,26 @@ Missing references indicate observable gaps.
 A signature or attestation produced by the sidecar.
 
 This attests only that:
+
 - the event was observed,
 - at the stated time,
 - and recorded as described.
 
-It does not attest to correctness or validity.
+It does not attest to correctness, intent, or validity.
 
 ---
 
 ## Optional Fields
 
-Optional fields may include:
+Optional fields MAY include:
 
 - clock synchronization state,
 - sidecar instance identifier,
 - environment metadata,
 - segmentation parameters,
-- or error indicators.
+- error indicators.
 
-Optional fields must not affect core verifiability.
+Optional fields MUST NOT alter canonical evidence semantics.
 
 ---
 
@@ -155,18 +171,19 @@ Optional fields must not affect core verifiability.
    The object is stored locally or remotely.
 
 6. **Aggregation**  
-   Objects may be batched for settlement.
+   Objects may be batched for settlement anchoring.
 
 ---
 
 ## Absence and Gaps
 
-Evidence Objects must support explicit representation of absence.
+Evidence Objects MUST support explicit representation of absence.
 
 If observation fails or is interrupted:
-- a gap must be detectable,
-- continuity must not be silently assumed,
-- and downstream verifiers must be able to identify missing segments.
+
+- a gap MUST be detectable,
+- continuity MUST NOT be silently assumed,
+- downstream verifiers MUST be able to identify missing segments.
 
 Absence is itself evidence.
 
@@ -174,34 +191,34 @@ Absence is itself evidence.
 
 ## Verification
 
-An independent verifier must be able to:
+An independent verifier MUST be able to:
 
 - recompute hashes,
 - validate signatures,
 - confirm chain integrity,
-- and detect omissions.
+- detect omissions.
 
-Verification must not require trust in the sidecar operator.
+Verification MUST NOT require privileged access to the originating system.
 
 ---
 
-## Non-Goals
+## Scope Limitation
 
-The Evidence Object must not:
+The Evidence Object:
 
-- store original payloads,
-- encode interpretation,
-- enforce policy,
-- or embed identity systems.
+- does not prove correctness,
+- does not establish intent,
+- does not guarantee regulatory compliance,
+- does not replace legal review.
 
-Such concerns belong outside this architecture.
+It preserves integrity and detectability only.
 
 ---
 
 ## Summary
 
-The Evidence Object is the atomic unit of trust in this system.
+The Evidence Object is the atomic unit of verifiable integrity within CVS.
 
-It is intentionally small, verifiable, and powerless.
+It is intentionally minimal, independently verifiable, and non-authoritative.
 
 Everything else builds upon it.
