@@ -1,57 +1,69 @@
 # Accounting and Tax Treatment
 
-This document defines the accounting and tax treatment of costs associated with evidence settlement under this architecture.
+This document defines accounting and tax considerations
+for settlement costs within the
+Cryptographic Verification Sidecar (CVS) specification.
 
-The goal is to ensure that evidence infrastructure integrates cleanly into existing financial controls.
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If conflict exists, the canonical specification governs.
+
+This document is normative with respect to structural auditability,
+not accounting policy.
 
 ---
 
 ## Purpose
 
-Evidence settlement must be:
+Settlement costs MUST be:
 
 - auditable,
 - attributable,
-- and compliant with standard accounting practices.
+- reconcilable within standard financial controls.
 
-Unclear financial treatment creates adoption friction.
+Unclear financial treatment introduces operational friction.
 
 ---
 
 ## Expense Classification
 
-Settlement costs should be classified as:
+Settlement costs MAY be classified as:
 
 - operating expenses,
-- compliance-related costs,
-- or risk mitigation expenditures.
+- compliance-related expenditures,
+- risk mitigation costs.
 
-They should not be capitalized as assets unless required by jurisdiction-specific accounting rules.
+The CVS specification does not prescribe capitalization rules.
+
+Accounting classification remains jurisdiction-specific.
 
 ---
 
 ## Cost Attribution
 
-Settlement costs must be attributable to:
+Settlement costs MUST be attributable to:
 
 - specific systems,
 - business units,
 - customers,
-- or cost centers.
+- cost centers.
 
-Attribution rules must be deterministic and reproducible.
+Attribution mechanisms MUST be deterministic and reproducible.
 
 ---
 
 ## Transaction Records
 
-Each settlement transaction must produce:
+Each settlement transaction MUST produce:
 
 - a verifiable transaction identifier,
 - a timestamp,
-- and a cost amount.
+- a recorded cost amount.
 
-These records form the basis for accounting reconciliation.
+These records support financial reconciliation.
 
 ---
 
@@ -59,62 +71,78 @@ These records form the basis for accounting reconciliation.
 
 When settlement is batched:
 
-- individual Evidence Objects must be traceable to batch costs,
-- allocation methodologies must be disclosed,
-- and cost splitting must be auditable.
+- individual Evidence Objects MUST remain traceable to batch costs,
+- allocation methodologies MUST be documented,
+- cost distribution MUST be auditable.
 
-Batching must not obscure financial accountability.
+Batching MUST NOT obscure accountability.
 
 ---
 
-## Tax Treatment
+## Tax Considerations
 
-Settlement costs may be treated as:
+Settlement costs MAY be treated according to applicable tax regulations.
 
-- deductible business expenses,
-- compliance expenditures,
-- or regulatory costs.
+The CVS specification:
 
-The architecture does not prescribe tax treatment, but supports documentation required for reporting.
+- does not prescribe tax treatment,
+- does not guarantee deductibility,
+- does not provide tax advice.
+
+It supports documentation required for reporting.
 
 ---
 
 ## Reporting Artifacts
 
-Implementations should be capable of generating:
+Implementations SHOULD be capable of generating:
 
 - itemized expense reports,
 - transaction summaries,
-- and jurisdiction-specific documentation.
+- machine-readable audit exports.
 
-Reports must be machine-readable and human-auditable.
+Reports SHOULD support both automated reconciliation
+and human audit review.
 
 ---
 
-## No Revenue Recognition
+## Revenue Neutrality
 
-This architecture does not generate revenue through settlement.
+The settlement mechanism itself does not generate revenue.
 
-Any monetization occurs outside this framework.
+Any monetization occurs external to the CVS architecture.
 
-Settlement costs are not income-producing activities.
+Settlement cost tracking is distinct from revenue recognition.
 
 ---
 
 ## Audit Readiness
 
-Accounting records related to settlement must support:
+Settlement-related accounting records MUST support:
 
 - internal audit,
 - external audit,
-- and regulatory review.
+- regulatory review where applicable.
 
-Auditability is a design requirement.
+Auditability is a structural requirement.
+
+---
+
+## Scope Limitation
+
+This document:
+
+- does not define accounting standards,
+- does not mandate tax positions,
+- does not alter regulatory obligations.
+
+It defines structural traceability requirements only.
 
 ---
 
 ## Summary
 
-Evidence settlement must fit naturally into existing financial systems.
+Settlement costs must integrate cleanly
+into existing financial systems.
 
-If accountants cannot understand it, adoption will stall.
+Financial clarity supports operational adoption.
