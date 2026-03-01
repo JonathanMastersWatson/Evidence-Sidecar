@@ -1,113 +1,142 @@
 # Who Pays
 
-This document defines the economic responsibility for funding evidence settlement under this architecture.
+This document defines economic responsibility for funding settlement
+within the Cryptographic Verification Sidecar (CVS) specification.
 
-Payment responsibility follows risk.
+The canonical CVS specification is defined by:
+
+- `CVS_ARCHITECTURE_v2.7.md`
+- `CVS_IMPLEMENTATION_v2.2.md`
+
+If conflict exists, the canonical specification governs.
+
+This document is normative with respect to funding separation,
+not economic policy.
 
 ---
 
 ## Principle
 
-The party that benefits from reduced ambiguity, reduced liability, or improved defensibility is responsible for funding evidence settlement.
+Funding responsibility generally aligns with risk exposure.
 
-This principle aligns cost with incentive.
+The party that benefits from reduced ambiguity,
+reduced liability exposure,
+or improved defensibility
+typically funds settlement anchoring.
+
+Cost alignment supports structural sustainability.
 
 ---
 
-## Primary Payer: The Evidence Producer
+## Primary Payer: Evidence Producer
 
-In most cases, the primary payer is:
+In many deployments, the primary payer is:
 
 - the system operator,
 - the content publisher,
 - the exchange,
-- or the organization whose outputs may be disputed.
+- the organization whose outputs may be disputed.
 
-These parties benefit directly from:
+These parties benefit from:
 
-- improved evidentiary standing,
-- reduced litigation exposure,
-- and increased insurability.
+- improved evidentiary posture,
+- reduced dispute uncertainty,
+- clearer audit trails.
 
 ---
 
 ## Secondary Payers
 
-In some contexts, settlement costs may be borne by:
+Settlement costs MAY be allocated to:
 
-- upstream content providers,
+- upstream providers,
 - downstream distributors,
 - contractual counterparties,
-- or ecosystem participants.
+- ecosystem participants.
 
-Such arrangements are contractual and external to this architecture.
+Such arrangements are contractual and external to CVS.
+
+The architecture does not mandate allocation models.
 
 ---
 
-## No Pay-to-Verify
+## Verification Independence
 
-Verification must not require payment by third parties.
+Verification MUST NOT require payment by third parties.
 
-Any party must be able to:
+Any party MUST be able to:
 
 - independently verify evidence,
 - inspect receipts,
-- and validate integrity.
+- validate integrity.
 
-Charging for verification undermines trust.
-
----
-
-## Cost as Operating Expense
-
-Evidence settlement costs should be treated as:
-
-- operational expenses,
-- compliance costs,
-- or risk mitigation expenditures.
-
-They are not speculative investments.
+Verification independence preserves neutrality.
 
 ---
 
-## Risk-Based Pricing
+## Operating Cost Classification
 
-Settlement costs may be allocated based on:
+Settlement costs MAY be treated as:
 
-- volume of evidence,
+- operational expenditure,
+- compliance expenditure,
+- risk mitigation expense.
+
+The CVS specification does not define accounting treatment.
+
+---
+
+## Risk-Based Allocation
+
+Settlement costs MAY be allocated based on:
+
+- evidence volume,
 - settlement frequency,
-- or operational complexity.
+- operational characteristics.
 
-Costs must remain bounded and predictable.
+Allocation models MUST NOT affect evidence integrity.
 
 ---
 
-## Insurance Alignment
+## Insurance Context
 
 In insured environments:
 
-- settlement costs may qualify as risk controls,
-- be recognized in underwriting,
-- or reduce deductibles.
+- settlement costs MAY be recognized as risk controls,
+- influence underwriting assessments,
+- affect policy conditions.
 
-Insurers do not pay directly but influence incentives.
+The CVS specification does not define insurer obligations.
 
 ---
 
-## Voluntary Participation
+## Voluntary Adoption
 
-No party is compelled to fund evidence settlement.
+Participation in evidence settlement is voluntary.
 
-However, parties choosing not to do so accept:
+Organizations choosing not to anchor evidence
+retain operational autonomy.
 
-- weaker evidentiary posture,
-- increased ambiguity,
-- and higher downstream risk.
+CVS does not impose funding obligations.
+
+---
+
+## Scope Limitation
+
+This document:
+
+- does not mandate pricing structures,
+- does not require specific payers,
+- does not define contractual arrangements.
+
+It defines structural funding alignment only.
 
 ---
 
 ## Summary
 
-Those who face dispute pay for clarity.
+Settlement requires funding.
 
-Evidence is funded where it creates value.
+Funding responsibility typically aligns with risk exposure.
+
+Economic allocation remains external to evidence integrity.
