@@ -1,6 +1,13 @@
 Licensed under the Apache License, Version 2.0.
 See LICENSE and NOTICE for details.
 
+----
+
+Status: Under Active Deterministic Serialization Review (Spec Hardening Phase).
+This repository is undergoing formal cross-language determinism validation and specification tightening. No production deployment is recommended until v3.x hardening is complete.
+
+---
+
 # CVS (Cryptographic Verification Sidecar) — Reference Architecture
 
 This repository defines a **reference architecture for independent, fail-open evidence systems**.
