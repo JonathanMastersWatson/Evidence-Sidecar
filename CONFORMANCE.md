@@ -4,7 +4,6 @@ This document defines the requirements for an implementation to be considered
 **CVS-Conforming** with the Cryptographic Verification Sidecar (CVS) specification.
 
 The canonical CVS specification is defined by:
-
 - `CVS_ARCHITECTURE_v2.7.md`
 - `CVS_IMPLEMENTATION_v2.2.md`
 
@@ -30,6 +29,29 @@ all mandatory requirements defined in this document and the canonical specificat
 
 Conformance is a technical classification.
 It is not a certification, endorsement, regulatory determination, or compliance badge.
+
+---
+
+## Non-Goals and Boundary Conditions
+
+CVS does not validate the correctness or completeness of declared constraints.
+CVS provides cryptographic proof that execution remained within the declared
+constraint boundary.
+
+Errors in constraint definition are upstream failures in constraint architecture,
+not failures of evidence. CVS is designed to expose such failures with precision
+by proving adherence to the declared boundary, regardless of outcome correctness.
+
+CVS is not:
+- a policy engine
+- a compliance system
+- a monitoring or logging tool
+- an access control system
+- an enforcement mechanism
+
+CVS witnesses execution events and produces independently verifiable evidence.
+That boundary is fixed. Systems that conflate witnessing with enforcement, or
+evidence with access control, are not CVS-Conforming regardless of naming or intent.
 
 ---
 
@@ -99,9 +121,76 @@ Disclosure is precise, not maximal.
 
 ---
 
+## Operational States and Degraded Modes
+
+A CVS-Conforming implementation MUST operate in one of the following
+explicitly declared states at all times.
+
+---
+
+### State 1 — Verified Execution
+
+Evidence generation is active and complete.
+All actions are accompanied by verifiable Proof Objects.
+This is the standard operating state.
+
+---
+
+### State 2 — Declared Degraded Mode
+
+Evidence generation is unavailable or impaired.
+Execution MAY continue under the following conditions:
+
+- The degraded state MUST be explicitly signalled.
+- All actions during degradation MUST be marked as unverified.
+- The duration and scope of degradation MUST be observable.
+- Resumption to Verified Execution MUST be logged explicitly.
+
+Degraded mode is a declared operational condition, not a failure to be concealed.
+
+---
+
+### State 3 — Halted Execution
+
+Execution is suspended due to inability to meet system-defined
+accountability requirements.
+
+This state is implementation-defined and may be required by upstream
+constraint architecture or regulatory context.
+
+---
+
+**Silent execution without evidence generation is non-conformant.**
+
+An implementation that continues execution without declaring a degraded state
+or halting cannot be described as CVS-Conforming.
+
+---
+
+## Constraint Formation Responsibility
+
+The completeness and correctness of constraint definitions are the responsibility
+of upstream systems — including but not limited to policy frameworks, consent
+architectures, and human governance layers.
+
+CVS assumes constraints are declared and focuses exclusively on producing
+verifiable evidence of adherence to those constraints.
+
+This separation is intentional. It preserves the independence of the evidence
+layer and prevents CVS from becoming an implicit authority over constraint
+correctness.
+
+A CVS-Conforming implementation MUST NOT:
+- interpret or modify upstream constraint definitions
+- make determinations about whether constraint definitions are correct
+- refuse to generate evidence on the basis of disagreement with declared constraints
+
+---
+
 ## Non-Conformant Patterns
 
-The following architectural patterns are considered non-conformant:
+The following architectural patterns are non-conformant regardless of intent
+or naming:
 
 - Inline execution dependency where evidence generation blocks execution
 - Systems that fail closed
@@ -109,9 +198,39 @@ The following architectural patterns are considered non-conformant:
 - Retroactive reconstruction of evidence
 - Proprietary verification mechanisms requiring privileged trust
 - Settlement-dependent execution
+- Evidence systems that share authority with the enforcement layer
+- Disclosure implemented as access control or RBAC filtering
+- Custom observation surfaces that redefine valid capture points
+- Partial or selective event emission that conceals coverage gaps
+- Systems that combine enforcement and witness authority in a single component
 
 Non-conformance does not invalidate a system.
-It simply means the system should not be described as CVS-Conforming.
+It means the system MUST NOT be described as CVS-Conforming.
+
+---
+
+## Conformance Test Checklist
+
+Conformance is binary. A system that passes all tests is CVS-Conforming.
+A system that fails any single test is not CVS-Conforming.
+There is no partial conformance.
+
+| # | Test | Pass Condition | Fail Condition |
+|---|---|---|---|
+| 1.1 | Witness separation | Sidecar has no ability to influence execution | Any shared control path exists |
+| 1.2 | No feedback loop | CVS failure or delay does not affect execution | Execution dependent on CVS state |
+| 2.1 | Event completeness | All three observation points emitted: pre-validation, validation result, post-execution | Any event missing or partial |
+| 2.2 | Correlation integrity | All events cryptographically linked via shared identifiers | Broken or missing linkage |
+| 3.1 | Proof Object sufficiency | Object contains intent, spec, decision, outcome — standalone | Requires external context to interpret |
+| 3.2 | Tamper detection | Field alteration produces detectable hash mismatch | Modification passes undetected |
+| 4.1 | Minimal proof capability | Claim verifiable without full data exposure | Full exposure required for verification |
+| 4.2 | Disclosure as proof | Cryptographic proof used for disclosure | RBAC or filtering used instead |
+| 5.1 | Fail-open under failure | Execution continues; gap is recorded | Execution blocked by sidecar failure |
+| 5.2 | Gap detectability | Absence of observation is detectable | Gap concealed or smoothed |
+| 6.1 | Operational state declared | System is in Verified, Degraded, or Halted state at all times | Silent execution without declared state |
+| 6.2 | Independent verification | Third-party verification possible without operator cooperation | Verification requires operator access |
+| 7.1 | No retroactive evidence | Evidence created at execution time | Evidence derived from logs post-hoc |
+| 7.2 | No enforcement logic | Sidecar produces no blocking or policy decisions | Enforcement logic present |
 
 ---
 
@@ -124,6 +243,7 @@ An implementation described as CVS-Conforming SHOULD be able to demonstrate:
 - independent third-party verification
 - scoped disclosure without payload overexposure
 - resistance to coercive over-disclosure
+- declared operational state transitions under degraded conditions
 
 Demonstration outweighs documentation.
 
