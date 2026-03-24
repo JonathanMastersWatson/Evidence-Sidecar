@@ -168,7 +168,18 @@ The upstream constraint layer defines:
 - CVS does not interpret constraint intent
 - CVS proves adherence to whatever constraints are declared
 
-### 5.3 Warning
+### 5.3 Upstream Reference
+
+The formation of constraint boundaries is addressed by the
+Constraint Architecture discipline, maintained separately at:
+
+https://github.com/JonathanMastersWatson/Constraint-Architecture
+
+Errors in constraint definition are upstream failures, not CVS failures.
+CVS will faithfully record adherence to incorrectly defined constraints.
+That is by design.
+
+### 5.4 Warning
 
 Systems that do not explicitly define constraints upstream will:
 
@@ -176,12 +187,198 @@ Systems that do not explicitly define constraints upstream will:
 - produce unverifiable outcomes
 - fail under adversarial scrutiny
 
-This is an upstream failure, not a CVS failure. CVS will faithfully
-record adherence to incorrect constraints. That is by design.
+---
+
+## 6. No Interpretation at Capture
+
+The CVS capture layer MUST NOT perform interpretation.
+
+Specifically, the capture layer MUST NOT:
+
+- interpret constraint results
+- classify outcomes beyond the recorded fields
+- map events to regulatory frameworks at capture time
+- derive conclusions from evidence
+- annotate Evidence Objects with meaning
+
+CVS records what happened. It does not record what it means.
+
+Any system that performs interpretation at capture time is not
+CVS-Conforming. Interpretation is the function of the external
+Interpretation Layer (§1.3). It occurs downstream, never at capture.
+
+This boundary is non-negotiable. Once interpretation enters the
+capture layer, independence is compromised and evidence becomes
+an argument rather than a record.
 
 ---
 
-## 6. Anti-Drift Principle
+## 7. Evidence Formation Constraint
+
+Evidence Objects MUST be formed at execution time.
+
+They MUST NOT be:
+
+- assembled from logs after execution
+- reconstructed from system state
+- derived from post-hoc analysis
+- synthesised from partial records
+
+An Evidence Object that is not formed at execution time is not
+a Proof Object. It is a log entry. The distinction is material.
+
+CVS does not improve logs. It replaces the need for them as evidence.
+
+Any system that reconstructs evidence after execution and describes
+the output as a Proof Object or Evidence Object is not CVS-Conforming.
+
+---
+
+## 8. Witness Isolation from Constraint Definition
+
+The CVS witness layer MUST NOT participate in constraint definition.
+
+Specifically, CVS MUST NOT:
+
+- define constraints
+- store constraint logic
+- participate in constraint evaluation
+- influence constraint configuration
+- validate that constraints are correctly formed
+
+Constraints are external inputs to the system being witnessed.
+CVS observes outcomes against declared constraints only.
+
+A witness layer that participates in constraint definition is no
+longer independent. Its evidence is no longer independently verifiable.
+Such a system is not CVS-Conforming.
+
+---
+
+## 9. No Control Loop from Witness
+
+CVS MUST NOT feed signals back into the execution path.
+
+Specifically, CVS MUST NOT:
+
+- trigger execution decisions
+- emit signals that influence system behaviour
+- act as a monitoring or alerting system
+- feed outputs into control or arbitration systems
+- pause, block, or modify execution based on observed state
+
+CVS is a passive observer. Passivity is not a limitation — it is
+the architectural property that makes evidence independent.
+
+The moment CVS becomes active, independence is gone and evidence
+is compromised. Such a system is not CVS-Conforming.
+
+---
+
+## 10. Evidence Sufficiency Requirement
+
+Each Evidence Object MUST be independently sufficient.
+
+A single Evidence Object MUST enable a verifier to confirm:
+
+- what was proposed (intent)
+- what constraints were in force (governing specification)
+- what evaluation result was produced (per-invariant)
+- what execution outcome occurred
+
+Verification MUST NOT require:
+
+- access to execution systems
+- access to internal logs
+- trust in the operator
+- external context of any kind
+
+If external context is required to interpret an Evidence Object,
+it is not an Evidence Object. It is a log reference.
+
+This is what makes CVS evidence court-defensible and
+third-party verifiable. Self-containment is not optional.
+
+---
+
+## 11. Multi-Party Verification
+
+CVS MUST support independent verification by multiple parties.
+
+### 11.1 Requirements
+
+- Any third party MUST be able to verify evidence independently
+- Verification MUST NOT require privileged system access
+- Verification MUST NOT require operator cooperation
+- Different parties MAY verify different scoped claims from the
+  same underlying evidence record
+
+### 11.2 Multi-Agency Pattern
+
+Multiple regulatory bodies or counterparties may each verify
+claims about the same execution record without sharing full
+records with each other.
+
+Each party receives a scoped Merkle proof for their specific claim.
+No party receives the full record by default.
+No party can determine what other parties verified.
+
+This is not an access control model. It is a proof model.
+
+### 11.3 Prohibited Configurations
+
+- Verification gated behind authentication or permissions
+- Evidence records requiring operator approval to access
+- Verification requiring trust in the system being verified
+
+---
+
+## 12. What CVS Is Not
+
+CVS is not:
+
+- a logging system
+- a monitoring platform
+- a compliance tool
+- an access control system
+- a policy engine
+- an analytics pipeline
+- a control system
+- an alerting system
+- a truth engine
+- a correctness validator
+
+CVS is a witness layer for execution-bound evidence.
+
+It records what happened at the commit boundary, proves that record
+has not been tampered with, and enables independent verification
+of specific claims without full data exposure.
+
+That is its complete function. Nothing more is claimed.
+
+---
+
+## 13. Language Reference
+
+The following language substitutions apply throughout all
+CVS-Conforming documentation and implementations:
+
+| Avoid | Use instead |
+|---|---|
+| monitoring | observation |
+| logging | evidence capture |
+| tracking | immutable record |
+| analytics | — (remove from core) |
+| compliance | conformance |
+| compliant | CVS-Conforming |
+| adopt | implement against |
+| deploy CVS | instrument with CVS |
+
+Language is where drift starts. Precise language prevents it.
+
+---
+
+## 14. Anti-Drift Principle
 
 Any implementation that:
 
@@ -191,6 +388,8 @@ Any implementation that:
 - modifies constraint semantics without versioned commitment
 - defines its own observation surface
 - implements disclosure as access control
+- feeds signals back into execution
+- participates in constraint definition
 
 has drifted from the architecture.
 
@@ -199,7 +398,7 @@ They are different systems and MUST NOT be described as CVS-Conforming.
 
 ---
 
-## 7. Claims This Document Prohibits
+## 15. Claims This Document Prohibits
 
 The following claims are invalid for any CVS implementation:
 
@@ -208,6 +407,7 @@ The following claims are invalid for any CVS implementation:
 - "Proof-based compliance" without execution-bound evidence
 - "512-compatible" without full invariant enforcement at the commit boundary
 - Any claim implying CVS validates the correctness of upstream constraints
+- Any claim implying CVS improves or replaces logs through reconstruction
 
 ---
 
