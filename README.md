@@ -1,76 +1,65 @@
-⚠ HARDENING PHASE – NOT APPROVED FOR DEPLOYMENT  
-See Issue #1 for full notice.
-
----
+# CVS — Cryptographic Verification Sidecar
 
 Licensed under the Apache License, Version 2.0.
-See LICENSE and NOTICE for details.
-
-----
-
-Status: Under Active Deterministic Serialization Review (Spec Hardening Phase).
-This repository is undergoing formal cross-language determinism validation and specification tightening. No production deployment is recommended until v3.x hardening is complete.
+See `LICENSE` and `LEGAL_NOTICE.md` for details.
 
 ---
 
-# CVS (Cryptographic Verification Sidecar) — Reference Architecture
+This repository defines a **reference architecture for independent,
+fail-open evidence systems**.
 
-This repository defines a **reference architecture for independent, fail-open evidence systems**.
+It specifies how complex digital systems can produce verifiable,
+independently defensible evidence of what occurred — without
+interrupting execution, exposing sensitive data, or concentrating
+authority.
 
-It specifies how complex digital systems can produce verifiable, court-defensible
-evidence of what occurred — **without interrupting execution, exposing sensitive
-data, or concentrating authority**.
-
-This is not a product.  
-This is not a platform.  
+This is not a product.
+This is not a platform.
 This is not a service.
 
-It is an architectural constraint set.
+It is an architectural specification.
 
 ---
 
-## Canonical Specification (Precedence)
+## Canonical Specification
 
-The canonical CVS specification is defined exclusively by the following documents:
+The canonical CVS specification is defined exclusively by:
 
 - `/08_CANON/CVS_ARCHITECTURE_v2.7.md`
 - `/08_CANON/CVS_IMPLEMENTATION_v2.2.md`
 
-The cryptographic fingerprints of these files are recorded in:
+Cryptographic fingerprints of these files are recorded in:
 
 - `/08_CANON/CANON_HASHES.md`
 
 If any conflict exists between documents in this repository,
 the files in `/08_CANON/` take precedence.
 
-Version numbers are immutable.
-Canonical documents must not be silently modified.
-Subsequent revisions must increment version numbers.
+Version numbers are immutable. Canonical documents must not be
+silently modified. Subsequent revisions must increment version numbers.
 
 ---
 
-## What This Is
-
-This repository defines an architectural pattern known as a **Cryptographic Verification Sidecar (CVS)** — also referred to descriptively as an **evidence sidecar**.
+## What CVS Is
 
 A CVS is an external witness that:
 
-- observes system events out-of-band,
-- records cryptographic evidence,
-- preserves time ordering and detectability of gaps,
-- and anchors proof to a neutral public settlement layer.
+- observes system events out-of-band
+- records cryptographic evidence
+- preserves time ordering and detectability of gaps
+- anchors proof to a neutral public settlement layer
 
-The sidecar does not execute logic.  
-It does not enforce policy.  
+The sidecar does not execute logic.
+It does not enforce policy.
 It does not decide outcomes.
 
 It witnesses.
 
 ---
 
-## What This Is Not
+## What CVS Is Not
 
-This repository does **not** define:
+This repository does not define:
 
 - a commercial offering
 - a hosted service
@@ -78,54 +67,58 @@ This repository does **not** define:
 - a certification or compliance badge
 - an enforcement or governance system
 - a truth or correctness engine
+- an access control system
+- a monitoring or logging tool
 
-Commercial implementations may exist elsewhere.  
+Commercial implementations may exist elsewhere.
 They are explicitly out of scope here.
 
 ---
 
-## Core Principles
+## Core Properties
 
-All compliant implementations must satisfy these non-negotiable constraints:
+A CVS-Conforming implementation satisfies these non-negotiable
+constraints:
 
-- **Fail-Open**  
-  Evidence systems must never block, delay, or interrupt execution.
+- **Fail-Open** — evidence systems must never block, delay, or
+  interrupt execution
 
-- **Witness-Only**  
-  The sidecar may observe and record, but never act, decide, or enforce.
+- **Witness-Only** — the sidecar may observe and record, but never
+  act, decide, or enforce
 
-- **Voluntary Participation**  
-  Adoption is opt-in. Consequences are emergent, not mandated.
+- **Authority Limits** — no hidden, delegated, or implicit power
+  is permitted
 
-- **Authority Limits**  
-  No hidden, delegated, or implicit power is permitted.
+- **Selective Disclosure** — transparency must be precise, bounded,
+  and minimal
 
-- **Selective Disclosure**  
-  Transparency must be precise, bounded, and minimal.
+- **Independent Verification** — verification must be possible
+  without trusting the operator
 
-These principles are defined in detail within the repository and are normative.
+These properties are defined in detail within the repository
+and are normative.
 
 ---
 
 ## Architecture Overview
 
-At a high level, the architecture consists of four explicitly separated layers:
+The architecture consists of four explicitly separated layers:
 
-1. **Evidence Model**  
-   Minimal, immutable Evidence Objects chained cryptographically to preserve
-   integrity, ordering, and detectable gaps.
+1. **Evidence Model**
+   Minimal, immutable Evidence Objects chained cryptographically
+   to preserve integrity, ordering, and detectable gaps.
 
-2. **Disclosure Kernel**  
-   A constrained mechanism for scoped, proportional evidence release without
-   over-exposure.
+2. **Disclosure Kernel**
+   A proof minimisation mechanism for scoped evidence release
+   without over-exposure. Not an access control system.
 
-3. **Settlement Layer**  
-   A neutral public ledger used solely for anchoring cryptographic receipts
-   proving existence at a point in time.
+3. **Settlement Layer**
+   A neutral public ledger used solely for anchoring cryptographic
+   receipts proving existence at a point in time.
 
-4. **Commercial Layer**  
-   A funding mechanism that pays for settlement without influencing evidence
-   generation, disclosure, or verification.
+4. **Commercial Layer**
+   A funding mechanism that pays for settlement without influencing
+   evidence generation, disclosure, or verification.
 
 Each layer is isolated to prevent authority bleed.
 
@@ -135,16 +128,14 @@ Each layer is isolated to prevent authority bleed.
 
 This architecture requires a settlement layer with:
 
-- deterministic finality,
-- predictable and bounded cost,
-- public verifiability,
-- and no execution-layer coupling.
+- deterministic finality
+- predictable and bounded cost
+- public verifiability
+- no execution-layer coupling
 
-At present, the XRP Ledger satisfies these requirements and is profiled in this
-repository.
-
-An illustrative alternative ledger profile is included to demonstrate ledger
-interchangeability.
+The XRP Ledger satisfies these requirements and is profiled in
+this repository. An alternative ledger profile is included to
+demonstrate ledger interchangeability.
 
 The architecture is ledger-agnostic by design.
 
@@ -152,25 +143,14 @@ The architecture is ledger-agnostic by design.
 
 ## Who This Is For
 
-Different audiences should start in different places:
-
-- **Executives & General Readers**  
-  → `public/EXECUTIVE_SUMMARY.md`
-
-- **CFOs & Risk Committees**  
-  → `public/CFO_BRIEF.md`
-
-- **Regulators & Auditors**  
-  → `public/REGULATOR_NOTE.md`
-
-- **Technology Vendors**  
-  → `public/VENDOR_SUPPLY_NOTE.md`
-
-- **Public Service & Government**  
-  → `public/PUBLIC_SERVICE_GOVERNMENT_NOTE.md`
-
-Engineers and architects should read the repository in order, starting with
-`00_INTENT`.
+| Audience | Start here |
+|---|---|
+| Executives & General Readers | `public/EXECUTIVE_SUMMARY.md` |
+| CFOs & Risk Committees | `public/CFO_BRIEF.md` |
+| Regulators & Auditors | `public/REGULATOR_NOTE.md` |
+| Technology Vendors | `public/VENDOR_SUPPLY_NOTE.md` |
+| Public Service & Government | `public/PUBLIC_SERVICE_GOVERNMENT_NOTE.md` |
+| Engineers & Architects | Start with `00_INTENT/`, read in order |
 
 ---
 
@@ -178,99 +158,79 @@ Engineers and architects should read the repository in order, starting with
 
 This architecture applies wherever:
 
-- outcomes are disputed after the fact,
-- internal logs are not trusted,
-- execution cannot be interrupted,
-- and liability attaches retroactively.
+- outcomes are disputed after the fact
+- internal logs are not trusted
+- execution cannot be interrupted
+- liability attaches retroactively
 
-Illustrative industry mappings include:
-
-- broadcast and digital media
-- financial markets
-- AI systems
-- supply chains
-- public sector systems
+Illustrative industry mappings: broadcast and digital media,
+financial markets, AI systems, supply chains, public sector systems.
 
 Mappings are illustrative, not exhaustive.
 
 ---
 
-## Normative and Guidance Documents
+## Normative Documents
 
-This repository includes several cross-cutting documents that apply to the
-architecture as a whole.
+The following documents are normative and apply to the architecture
+as a whole:
 
-These documents are not tied to a single layer and should be read alongside the
-core specification.
+- `CONFORMANCE.md` — minimum behavioral requirements for a
+  CVS-Conforming implementation; includes operational states,
+  binary test checklist, and non-conformant patterns
 
-### Normative
+- `ANTI_DRIFT.md` — non-negotiable architectural boundaries;
+  layer separation, fixed observation model, prohibited configurations
 
-- `CONFORMANCE.md`  
-  Defines the minimum behavioral requirements for an implementation to be
-  considered conformant with this architecture.
+- `VERIFICATION_PROTOCOL.md` — canonical six-step verification
+  protocol for auditors, regulators, and independent reviewers
 
-- `INTEROPERABILITY.md`  
-  Defines how independent implementations verify, exchange, and validate
-  evidence without shared control or coordination.
+- `INTEROPERABILITY.md` — how independent implementations verify,
+  exchange, and validate evidence without shared control
 
-### Non-Normative Guidance
+---
 
-- `ADOPTION.md`  
-  Describes a low-risk, incremental path for organizations to adopt the
-  architecture without disrupting existing systems.
+## Guidance Documents
 
-- `CRYPTOGRAPHY.md`  
-  Describes cryptographic minimum properties and implementation considerations.
-  It does not mandate specific algorithms.
+The following documents are informational only:
 
-Normative documents use MUST / MUST NOT language.  
+- `ADOPTION.md` — incremental path for organisations to introduce
+  the architecture without disrupting existing systems
+
+- `CRYPTOGRAPHY.md` — cryptographic minimum properties and
+  implementation considerations; does not mandate specific algorithms
+
+Normative documents use MUST / MUST NOT language.
 Guidance documents are informational only.
 
 ---
 
 ## Legal and Regulatory Posture
 
-This repository provides **technical architecture**, not legal advice.
+This repository provides technical architecture, not legal advice.
 
 It does not guarantee evidentiary admissibility in any jurisdiction.
 
-Its purpose is to make evidence **stronger, more independent, and more
-defensible** — not to replace legal judgment, regulatory authority, or due
-process.
+Its purpose is to make evidence stronger, more independent, and more
+defensible — not to replace legal judgment, regulatory authority,
+or due process.
 
----
-
-## Adoption Philosophy
-
-This architecture is designed to spread quietly.
-
-No mandate is required.  
-No authority is asserted.
-
-Systems that adopt independent witnesses gain defensibility.  
-Systems that do not remain operational — but increasingly indefensible.
+See `LEGAL_NOTICE.md` for limitation of responsibility,
+Apache 2.0 attribution, and open commons declaration.
 
 ---
 
 ## Relationship to 512
 
-This work is **compatible with**, but **independent of**, the 512 constraint
-kernel.
+CVS is compatible with, but independent of, the 512 constraint set.
 
-512 defines high-level invariants around voluntariness, transparency,
-contestability, and authority limits.
-
-This repository defines one possible realization of those constraints: the
-production of independent, fail-open evidence.
+512 defines discovered constraints governing execution-time legitimacy.
+CVS defines one witness architecture that can operate alongside
+systems satisfying 512's properties.
 
 Neither governs the other.
-
----
-
-## License
-
-Licensed under the **Apache License, Version 2.0**. See `LICENSE`.  
-Attributions and required notices (if any) are in `NOTICE`.
+CVS may operate without 512. Systems satisfying 512's properties
+may use witness architectures other than CVS.
 
 ---
 
@@ -278,24 +238,10 @@ Attributions and required notices (if any) are in `NOTICE`.
 
 This repository is intentionally complete.
 
-Future changes should be additive, restrained, and justified by real-world
-failure modes.
+Future changes should be additive, restrained, and justified by
+real-world failure modes.
 
 Complexity is not a feature.
-
----
-
-## Legal Notice
-
-See `LEGAL_NOTICE.md` for limitation of responsibility and implementation boundaries.
-
----
-
-## Scope of Repository
-
-This repository contains only the canonical CVS reference architecture and associated cryptographic hashes.
-
-Exploratory, philosophical, or governance discussion documents are excluded and do not form part of the CVS specification.
 
 ---
 
@@ -303,6 +249,6 @@ Exploratory, philosophical, or governance discussion documents are excluded and 
 
 Trust is no longer established at runtime.
 
-It is established **after the fact**, under scrutiny.
+It is established after the fact, under scrutiny.
 
 This architecture exists for that moment.
