@@ -19,6 +19,9 @@ This is not a service.
 
 It is an architectural specification.
 
+> **Pre-hardening phase in progress.** Language and normative framework
+> are being tightened. See [`PRE_HARDENING_NOTICE.md`](./PRE_HARDENING_NOTICE.md).
+
 ---
 
 ## Canonical Specification
@@ -242,6 +245,18 @@ Future changes should be additive, restrained, and justified by
 real-world failure modes.
 
 Complexity is not a feature.
+
+See `PRE_HARDENING_NOTICE.md` for current hardening phase status.
+
+---
+
+## Reference
+
+- `PRIMITIVE_BOUNDARY.md` — what CVS defines and what it does not;
+  derivative responsibility
+- `LIVING_DOCUMENTS.md` — which documents are dynamic and subject
+  to revision
+- `PRE_HARDENING_NOTICE.md` — current hardening phase status
 
 ---
 
