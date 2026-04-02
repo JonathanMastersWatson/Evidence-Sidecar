@@ -2,8 +2,10 @@
 
 This repository intentionally excludes a wide range of concerns that are commonly, but incorrectly, associated with evidence, transparency, governance, and trust.
 
-These exclusions are deliberate.  
+These exclusions are deliberate.
 They exist to preserve neutrality, adoptability, and long-term legitimacy.
+
+> **Pre-hardening phase in progress.** See [`PRE_HARDENING_NOTICE.md`](../PRE_HARDENING_NOTICE.md).
 
 ---
 
@@ -19,7 +21,7 @@ This repository does not define:
 - a marketplace
 - a licensing model
 
-Commercial implementations may exist elsewhere.  
+Commercial implementations may exist elsewhere.
 They are explicitly out of scope here.
 
 This repository defines **constraints and reference architecture only**.
@@ -37,7 +39,7 @@ This repository does not:
 - assign blame
 - determine truth
 
-It records evidence.  
+It records evidence.
 It does not judge it.
 
 Any interpretation of evidence occurs outside the scope of this work.
@@ -68,7 +70,8 @@ The evidence sidecar described here:
 - does not modify payloads
 - does not influence outcomes
 
-Any system in which the sidecar can alter execution is non-compliant with this architecture.
+Any system in which the sidecar can alter execution is non-conformant
+with this architecture.
 
 ---
 
@@ -79,7 +82,7 @@ This repository explicitly excludes:
 - inline processing
 - mandatory signing before execution
 - synchronous verification requirements
-- blocking compliance gates
+- blocking conformance gates
 
 All evidence generation must occur **out-of-band**.
 
@@ -159,7 +162,7 @@ However, such systems must accept that:
 - liability exposure will be higher,
 - and insurance and regulatory scrutiny may increase.
 
-Adoption is voluntary.  
+Adoption is voluntary.
 Consequences are not.
 
 ---
@@ -176,4 +179,4 @@ Each non-goal exists to ensure that this architecture:
 
 Anything not explicitly included here is presumed out of scope.
 
-Future extensions must respect these boundaries or exist in separate
+Future extensions must respect these boundaries or exist in separate repositories.
