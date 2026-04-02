@@ -11,6 +11,8 @@ If any conflict exists, the canonical specification takes precedence.
 
 Conformance is behavioral, not declarative.
 
+> **Pre-hardening phase in progress.** See [`PRE_HARDENING_NOTICE.md`](./PRE_HARDENING_NOTICE.md).
+
 ---
 
 ## Normative Language
@@ -32,6 +34,19 @@ It is not a certification, endorsement, regulatory determination, or compliance 
 
 ---
 
+## Primitive Boundary
+
+CVS defines evidence formation at the execution boundary.
+
+It does not define system architecture, orchestration, deployment models,
+or implementation patterns.
+
+Any system built using CVS as a primitive is a derivative implementation.
+Responsibility for design, deployment, and operation of that derivative
+remains entirely with the implementing party.
+
+---
+
 ## Non-Goals and Boundary Conditions
 
 CVS does not validate the correctness or completeness of declared constraints.
@@ -44,7 +59,7 @@ by proving adherence to the declared boundary, regardless of outcome correctness
 
 CVS is not:
 - a policy engine
-- a compliance system
+- a conformance system
 - a monitoring or logging tool
 - an access control system
 - an enforcement mechanism
@@ -144,7 +159,7 @@ Execution MAY continue under the following conditions:
 - The degraded state MUST be explicitly signalled.
 - All actions during degradation MUST be marked as unverified.
 - The duration and scope of degradation MUST be observable.
-- Resumption to Verified Execution MUST be logged explicitly.
+- Resumption to Verified Execution MUST be recorded explicitly.
 
 Degraded mode is a declared operational condition, not a failure to be concealed.
 
@@ -231,6 +246,7 @@ There is no partial conformance.
 | 6.2 | Independent verification | Third-party verification possible without operator cooperation | Verification requires operator access |
 | 7.1 | No retroactive evidence | Evidence created at execution time | Evidence derived from logs post-hoc |
 | 7.2 | No enforcement logic | Sidecar produces no blocking or policy decisions | Enforcement logic present |
+| 8.1 | Primitive boundary respected | No architecture, orchestration, or deployment patterns defined by CVS layer | CVS primitive used to define derivative architecture |
 
 ---
 
@@ -256,7 +272,7 @@ CVS-Conforming implementations do not imply:
 - guaranteed correctness
 - guaranteed truth
 - prevention of wrongdoing
-- regulatory compliance
+- regulatory conformance
 - legal sufficiency in any jurisdiction
 
 CVS strengthens evidentiary defensibility.
@@ -269,6 +285,7 @@ It does not replace legal judgment or regulatory authority.
 This document is normative and must be read in conjunction with:
 
 - `README.md`
+- `PRIMITIVE_BOUNDARY.md`
 - `01_PRINCIPLES/*`
 - `02_EVIDENCE_MODEL/*`
 - `03_SELECTIVE_DISCLOSURE/*`
