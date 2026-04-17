@@ -26,7 +26,7 @@ These layers MUST NOT share authority, control paths, or decision logic.
 
 - Executes at the commit boundary
 - Enforces pre-committed constraints
-- Produces binary output only: allow / deny / gap
+- Produces binary output only: ALLOW or DENY
 - Contains no interpretation, discretion, or state accumulation
 
 ### 1.2 Witness Layer (CVS)
