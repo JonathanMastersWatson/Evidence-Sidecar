@@ -3,11 +3,12 @@
 This document defines the requirements for an implementation to be considered
 **CVS-Conforming** with the Cryptographic Verification Sidecar (CVS) specification.
 
-The canonical CVS specification is defined by:
-- `CVS_ARCHITECTURE_v2.7.md`
-- `CVS_IMPLEMENTATION_v2.2.md`
+The canonical CVS specification is defined by the documents in `/08_CANON/`:
+- `CVS_ARCHITECTURE_v{M}.{m}.md` — current canonical version
+- `CVS_IMPLEMENTATION_v{M}.{m}.md` — current canonical version
 
-If any conflict exists, the canonical specification takes precedence.
+The `/08_CANON/` directory always contains the current canonical versions.
+If any conflict exists, the documents in `/08_CANON/` take precedence.
 
 Conformance is behavioral, not declarative.
 
@@ -234,13 +235,13 @@ There is no partial conformance.
 |---|---|---|---|
 | 1.1 | Witness separation | Sidecar has no ability to influence execution | Any shared control path exists |
 | 1.2 | No feedback loop | CVS failure or delay does not affect execution | Execution dependent on CVS state |
-| 2.1 | Event completeness | All three observation points emitted: pre-validation, validation result, post-execution | Any event missing or partial |
+| 2.1 | Event completeness | On evaluated events: all three observation points emitted (pre-validation, validation-result, post-execution). On fail-open events: pre-validation and gap_record emitted; validation-result absent and not required | Any observation point missing on an evaluated event; gap_record absent on a fail-open event |
 | 2.2 | Correlation integrity | All events cryptographically linked via shared identifiers | Broken or missing linkage |
 | 3.1 | Proof Object sufficiency | Object contains intent, spec, decision, outcome — standalone | Requires external context to interpret |
 | 3.2 | Tamper detection | Field alteration produces detectable hash mismatch | Modification passes undetected |
 | 4.1 | Minimal proof capability | Claim verifiable without full data exposure | Full exposure required for verification |
 | 4.2 | Disclosure as proof | Cryptographic proof used for disclosure | RBAC or filtering used instead |
-| 5.1 | Fail-open under failure | Execution continues; gap is recorded | Execution blocked by sidecar failure |
+| 5.1 | Fail-open under failure | Execution continues; gap record emitted to witness layer | Execution blocked by sidecar failure |
 | 5.2 | Gap detectability | Absence of observation is detectable | Gap concealed or smoothed |
 | 6.1 | Operational state declared | System is in Verified, Degraded, or Halted state at all times | Silent execution without declared state |
 | 6.2 | Independent verification | Third-party verification possible without operator cooperation | Verification requires operator access |
