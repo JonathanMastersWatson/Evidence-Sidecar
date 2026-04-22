@@ -61,7 +61,16 @@ The outcome of constraint evaluation, recorded per invariant.
 
 - MUST record the result for every constraint evaluated
 - MUST NOT aggregate or summarise — per-invariant granularity is required
-- MUST be binary per constraint: satisfied / not satisfied / gap
+- MUST be binary per constraint: satisfied / not satisfied / unevaluated
+
+**Note on "unevaluated":** a per-constraint result of unevaluated
+means the gate could not evaluate that specific constraint — for
+example, because a required input was unavailable during context
+binding. This is a constraint-level state, distinct from an overall
+witness layer gap. A witness layer gap record is produced when the
+gate itself is unavailable and no evaluation occurs at all. A
+per-constraint unevaluated result occurs within an otherwise
+functioning evaluation pass. The two must not be conflated.
 
 ### Element 4 — Execution Outcome
 
