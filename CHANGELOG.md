@@ -50,26 +50,30 @@ matrix.
 **README.md:**
 - Canonical Specification: version-specific filenames replaced
   with version-agnostic pattern referencing /08_CANON/ directory
-- What CVS Is Not: "compliance badge" → "conformance badge"
-- Reference section: UPSTREAM.md description updated; new entry
-  for 02_EVIDENCE_MODEL/GATE_OUTPUT_MATRIX.md added
+- What CVS Is Not: "certification or compliance badge" →
+  "certification or conformance badge"
+- Reference section: UPSTREAM.md description updated to include
+  three-layer stack context; new entry added for
+  02_EVIDENCE_MODEL/GATE_OUTPUT_MATRIX.md
 
 **02_EVIDENCE_MODEL/GATE_OUTPUT_MATRIX.md (new):**
 Complete matrix of gate completion states and witness layer
-classifications. Four scenarios defined:
+classifications. Five scenarios defined:
 
 | Scenario | Gate completed? | Gate result present? | Witness classification |
 |---|---|---|---|
-| Normal evaluation | Yes | ALLOW or DENY | Validation Result event |
-| Fail-open | No | None | Evidence chain gap record |
-| Per-constraint unevaluated | Yes (partial) | DENY | Validation Result with unevaluated indicators |
-| Sidecar unavailable | — | — | Gap in evidence chain; local queue |
+| Normal — ALLOW | Yes | ALLOW | Validation Result event |
+| Normal — DENY | Yes | DENY | Validation Result event with violated constraint detail |
+| Fail-open — gate unavailable | No | None | Evidence chain gap record |
+| Per-constraint unevaluated | Yes (partial) | DENY or partial | Validation Result with unevaluated indicators |
+| Sidecar unavailable | Gate independent | Gate independent | Gap in evidence chain; local queue |
 
-Critical semantic rules stated:
-- per-constraint unevaluated is never treated as pass or allow
+Five critical semantic rules stated:
+- unevaluated is never treated as pass or allow
 - evidence chain gap is not a gate output
 - gap record and unevaluated are distinct — do not conflate
 - ALLOW requires all seven constraints evaluated and passed
+- execution during a gap is ungoverned, not allowed
 
 ### Vocabulary Lock Status (CVS repo)
 
