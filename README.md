@@ -26,10 +26,11 @@ It is an architectural specification.
 
 ## Canonical Specification
 
-The canonical CVS specification is defined exclusively by:
+The canonical CVS specification is defined exclusively by the
+documents in `/08_CANON/`:
 
-- `/08_CANON/CVS_ARCHITECTURE_v2.7.md`
-- `/08_CANON/CVS_IMPLEMENTATION_v2.2.md`
+- `/08_CANON/CVS_ARCHITECTURE_v{M}.{m}.md` — current canonical version
+- `/08_CANON/CVS_IMPLEMENTATION_v{M}.{m}.md` — current canonical version
 
 Cryptographic fingerprints of these files are recorded in:
 
@@ -67,7 +68,7 @@ This repository does not define:
 - a commercial offering
 - a hosted service
 - an SDK or API
-- a certification or compliance badge
+- a certification or conformance badge
 - an enforcement or governance system
 - a truth or correctness engine
 - an access control system
@@ -254,6 +255,10 @@ See `PRE_HARDENING_NOTICE.md` for current hardening phase status.
 
 - `PRIMITIVE_BOUNDARY.md` — what CVS defines and what it does not;
   derivative responsibility
+- `UPSTREAM.md` — three-layer stack (Constraint Architecture / 512 /
+  CVS) and upstream constraint definition responsibility
+- `02_EVIDENCE_MODEL/GATE_OUTPUT_MATRIX.md` — gate completion states
+  and witness classification matrix
 - `LIVING_DOCUMENTS.md` — which documents are dynamic and subject
   to revision
 - `PRE_HARDENING_NOTICE.md` — current hardening phase status
