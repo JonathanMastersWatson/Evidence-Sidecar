@@ -13,7 +13,7 @@ Its function is to:
 Any implementation that violates the constraints defined here is not
 CVS-Conforming, regardless of naming, documentation, or intent.
 
-> **Pre-hardening phase in progress.** See [`PRE_HARDENING_NOTICE.md`](../PRE_HARDENING_NOTICE.md).
+> **Pre-hardening phase in progress.** See [`PRE_HARDENING_NOTICE.md`](./PRE_HARDENING_NOTICE.md).
 
 ---
 
@@ -22,12 +22,23 @@ CVS-Conforming, regardless of naming, documentation, or intent.
 The architecture consists of three strictly independent layers.
 These layers MUST NOT share authority, control paths, or decision logic.
 
+The authoritative three-layer definition — covering what each layer
+owns, produces, and must not claim — is maintained in the 512
+repository at `LAYER_REFERENCE.md`. The summary below is scoped to
+CVS-specific constraints.
+
 ### 1.1 Commit Gate (Enforcement Layer)
 
 - Executes at the commit boundary
-- Enforces pre-committed constraints
+- Holds **exclusive commit authority** — the gate's authorisation
+  signal is the structural prerequisite for the **non-bypassable
+  commit path** to open
+- Enforces pre-committed constraints deterministically
 - Produces binary output only: ALLOW or DENY
 - Contains no interpretation, discretion, or state accumulation
+- When evaluation cannot complete: produces no output; execution
+  proceeds under fail-open (Invariant 6); the witness layer records
+  the ungoverned period as an evidence chain gap
 
 ### 1.2 Witness Layer (CVS)
 
@@ -35,6 +46,8 @@ These layers MUST NOT share authority, control paths, or decision logic.
 - Produces immutable Evidence Objects
 - Has no ability to influence execution
 - Is independently verifiable
+- Records ALLOW or DENY results from the gate, and classifies
+  ungoverned periods as evidence chain gaps
 
 ### 1.3 Interpretation Layer (External)
 
@@ -63,17 +76,28 @@ There is no configurable observation surface.
 
 ### 2.1 Valid Observation Points
 
-CVS emits exactly three event types:
+CVS emits exactly three event types per evaluated execution:
 
 1. **Pre-Validation** — intent declaration, before constraint evaluation
-2. **Validation Result** — constraint evaluation outcome
+2. **Validation Result** — constraint evaluation outcome (ALLOW or DENY)
 3. **Post-Execution** — actual execution outcome
+
+On fail-open events — where the gate cannot complete evaluation:
+
+- Pre-Validation is emitted
+- Validation Result is absent — the gate produced no output
+- A gap record replaces Validation Result in the evidence chain
+- Post-Execution is emitted
 
 These events are:
 
 - emitted at the commit boundary
 - cryptographically linked
 - correlated via shared identifiers
+
+See `02_EVIDENCE_MODEL/GATE_OUTPUT_MATRIX.md` for the complete
+matrix of gate completion states and corresponding witness
+classification.
 
 ### 2.2 Prohibited Variants
 
@@ -85,8 +109,9 @@ The following are non-conformant:
 - Systems that observe without binding to commit execution
 - Systems that substitute logging for structured event emission
 
-A system that does not emit all three event types for every execution
-is not CVS-Conforming.
+A system that does not emit all three event types for every evaluated
+execution, or that does not emit a gap record for every fail-open
+event, is not CVS-Conforming.
 
 ---
 
@@ -341,7 +366,7 @@ CVS is not:
 
 - a logging system
 - a monitoring platform
-- a compliance tool
+- a conformance tool
 - an access control system
 - a policy engine
 - an analytics pipeline
@@ -406,14 +431,14 @@ The following claims are invalid for any CVS implementation:
 
 - "CVS-compatible" without satisfying all conformance requirements
 - "CVS-enabled" without independent witness separation
-- "Proof-based compliance" without execution-bound evidence
+- "Proof-based conformance" without execution-bound evidence
 - "512-compatible" without full invariant enforcement at the commit boundary
 - Any claim implying CVS validates the correctness of upstream constraints
 - Any claim implying CVS improves or replaces logs through reconstruction
 
 ---
 
-## Relationship to Conformance Document
+## Relationship to Other Documents
 
 This document and `CONFORMANCE.md` are complementary.
 
@@ -423,5 +448,14 @@ This document defines what the architecture is — and what it is not.
 Where both documents address the same property, both apply.
 Neither supersedes the other.
 
-The canonical CVS specification (`CVS_ARCHITECTURE_v2.7.md` and
-`CVS_IMPLEMENTATION_v2.2.md`) governs where any conflict exists.
+- `CONFORMANCE.md` — behavioral requirements and conformance checklist
+- `02_EVIDENCE_MODEL/GATE_OUTPUT_MATRIX.md` — gate completion states
+  and witness classification matrix
+- `PRIMITIVE_BOUNDARY.md` — CVS primitive scope and derivative
+  responsibility
+- `UPSTREAM.md` — three-layer stack and upstream constraint definition
+- `512-main/LAYER_REFERENCE.md` — authoritative three-layer semantic
+  firewall (Kernel / Commit Boundary / Witness Layer)
+
+The canonical CVS specification in `/08_CANON/` governs where any
+conflict exists.
