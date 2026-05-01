@@ -12,8 +12,6 @@ If any conflict exists, the documents in `/08_CANON/` take precedence.
 
 Conformance is behavioral, not declarative.
 
-> **Pre-hardening phase in progress.** See [`PRE_HARDENING_NOTICE.md`](./PRE_HARDENING_NOTICE.md).
-
 ---
 
 ## Normative Language
