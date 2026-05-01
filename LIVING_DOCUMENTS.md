@@ -1,11 +1,10 @@
 # Living Documents
 
 This file identifies documents in the CVS repository that are dynamic —
-subject to ongoing revision, hardening, or alignment updates.
+subject to ongoing revision or alignment updates.
 
-Living documents are not frozen. They may not always be in full
-alignment with each other during active hardening phases. Implementers
-should treat them as directional references, not sealed specifications.
+Living documents reflect the current best understanding of the architecture
+or pattern. They will not relax constraints — only clarify or tighten them.
 
 ---
 
@@ -13,10 +12,10 @@ should treat them as directional references, not sealed specifications.
 
 | Document | Location | Why Dynamic |
 |---|---|---|
-| `CVS_ARCHITECTURE` | `/08_CANON/` | CTO/Board-level architecture reference. Under active language hardening. Version-bumped on content change. |
-| `CVS_IMPLEMENTATION` | `/08_CANON/` | Engineer-level build reference. Under active normative framework development. Version-bumped on content change. |
+| `CVS_ARCHITECTURE` | `/BUILDERS/` | CTO/Board-level architecture reference. Version-bumped on content change. |
+| `CVS_IMPLEMENTATION` | `/BUILDERS/` | Engineer-level build reference. Version-bumped on content change. |
 | `ANTI_DRIFT.md` | Repo root | Expanded as new drift patterns are identified. |
-| `CONFORMANCE.md` | Repo root | Updated as conformance criteria are hardened. |
+| `CONFORMANCE.md` | Repo root | Updated as conformance criteria are clarified. |
 
 ---
 
@@ -25,8 +24,7 @@ should treat them as directional references, not sealed specifications.
 A living document:
 
 - reflects the current best understanding of the architecture or pattern
-- may be revised without a major version bump during hardening phases
-- will converge toward a sealed version at the end of the current hardening pass
+- will converge toward a sealed version at major release boundaries
 - will not relax constraints — only clarify or tighten them
 
 A living document does **not**:
@@ -45,6 +43,7 @@ The following are frozen and will not change:
 | Document | Why Frozen |
 |---|---|
 | `CANON_HASHES.md` | Cryptographic fingerprint record — sealed |
+| `CANONICAL_COMMITMENT.md` | Priority record — append-only |
 | `LEGAL_NOTICE.md` | Legal posture — fixed |
 | `LICENSE` | Apache 2.0 — fixed |
 | `NOTICE` | Attribution record — fixed |
@@ -53,10 +52,11 @@ The following are frozen and will not change:
 
 ---
 
-## Sealed Release
+## Sealed Release — May 2026
 
-At the end of the current hardening pass, living documents will be
-version-sealed. `PRE_HARDENING_NOTICE.md` will be updated to reflect
-sealed status and a new archive hash will be committed.
+Hardening phase complete. All living documents have been version-sealed
+as of May 2026. Repository status is Active. Pre-hardening banners and
+notices have been removed. A new archive hash will be committed to
+record the sealed state.
 
-See `PRE_HARDENING_NOTICE.md` for current hardening phase status.
+Archive hash record: `CANONICAL_COMMITMENT.md` at repo root.
