@@ -5,8 +5,6 @@ This repository intentionally excludes a wide range of concerns that are commonl
 These exclusions are deliberate.
 They exist to preserve neutrality, adoptability, and long-term legitimacy.
 
-> **Pre-hardening phase in progress.** See [`PRE_HARDENING_NOTICE.md`](../PRE_HARDENING_NOTICE.md).
-
 ---
 
 ## This Is Not a Product
