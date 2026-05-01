@@ -13,8 +13,6 @@ Its function is to:
 Any implementation that violates the constraints defined here is not
 CVS-Conforming, regardless of naming, documentation, or intent.
 
-> **Pre-hardening phase in progress.** See [`PRE_HARDENING_NOTICE.md`](./PRE_HARDENING_NOTICE.md).
-
 ---
 
 ## 1. Layer Separation
