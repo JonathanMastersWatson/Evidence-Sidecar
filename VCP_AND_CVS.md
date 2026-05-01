@@ -1,7 +1,7 @@
 # CVS AND VCP — PARALLEL DEVELOPMENT ACKNOWLEDGMENT
 
 **Jonathan M. Watson | CVS Cryptographic Verification Sidecar**
-**Version 1.0 | May 2026**
+**Version 1.1 | May 2026**
 
 ---
 
@@ -66,30 +66,63 @@ verifiable execution evidence without operational coupling.
 
 ## Where CVS and VCP Differ
 
-The shared foundation aside, CVS and VCP diverge on four properties that
-matter in high-assurance contexts.
+The shared foundation aside, CVS and VCP diverge on five properties that
+matter in high-assurance deployment contexts.
 
-### 1. Time Anchoring
+### 1. External Time Anchoring
 
 **VCP** uses PTPv2 (IEEE 1588 Precision Time Protocol) for its highest
-precision tier, with NTP and best-effort tiers below that. PTPv2 achieves
+precision tier, with NTP and best-effort tiers below. PTPv2 achieves
 sub-microsecond precision within a network but synchronizes against network
-time sources.
+time sources — sources that remain within infrastructure the operator controls
+or influences.
 
-**CVS** requires a GPS-disciplined hardware oscillator as the time source
-baseline. GPS-disciplined timing is externally referenceable — timestamps
-are verifiable against any GPS receiver anywhere in the world, independent
-of the operator's network infrastructure. A PTPv2 timestamp can be questioned
-if the network time source is compromised. A GPS-disciplined timestamp is
-anchored to atomic time signals from satellite infrastructure that no single
-operator controls.
+**CVS** uses public ledger consensus as the primary external time anchor.
+Settlement anchors are written to the XRP Ledger every 30–60 seconds. The
+timestamp on each anchor is set by ledger consensus — a distributed process
+no single operator controls, observable by any party with internet access,
+and impossible to backdate. An operator cannot alter the ledger timestamp on
+an anchor that has already achieved finality.
 
-In regulatory, insurance, and legal evidence contexts, external referencability
-matters. A timestamp that any party can independently verify against satellite
-time without trusting any infrastructure controlled by the operator is a
-structurally stronger proof than a network-synchronized timestamp.
+This distinction matters for any dispute, regulatory examination, or insurance
+claim where the opposing party questions whether evidence was fabricated after
+the fact. A timestamp set by a neutral public consensus ledger is structurally
+more defensible than a timestamp sourced from infrastructure the operator
+administers. The ledger anchor provides an external temporal bound that
+internal clock manipulation cannot override — any fabricated timestamp
+preceding the anchor time is exposed by the contradiction.
 
-### 2. Three-Plane Structural Separation
+This property requires no special hardware. Any system with internet access
+— including on-premises broadcast infrastructure, legacy trading systems, and
+air-gapped environments with scheduled connectivity — can anchor to the public
+ledger. The external time anchor is available wherever CVS can be deployed.
+
+### 2. Fail-Open Behavior
+
+**CVS** requires fail-open behavior as a non-negotiable conformance requirement.
+At no point may the operation, availability, or correctness of the observed
+system depend on sidecar availability. If the sidecar fails under any condition
+— power loss, network partition, ledger unavailability, software crash, clock
+desynchronization, key rotation failure, resource exhaustion — the observed
+system continues operating unchanged. The failure is observable. The resulting
+evidence gap is detectable and recorded upon recovery. Execution impact is
+always zero. This is not a design preference — it is a conformance requirement.
+An implementation that can block execution is not a conformant CVS implementation.
+
+**VCP** operates without modifying execution logic, suggesting non-blocking
+design intent. Whether fail-open behavior is a formally specified conformance
+requirement in VCP — and whether it covers the full range of failure conditions
+CVS enumerates — is not stated in VCP's published specification.
+
+For deployment in high-availability environments — broadcast infrastructure,
+financial systems, healthcare, industrial control — the distinction between
+"non-blocking by design intent" and "fail-open as non-negotiable conformance
+requirement" is operationally significant. Engineering teams reject evidence
+systems that carry execution risk. The conformance requirement, not just the
+design intent, is what enables deployment in production environments without
+risk negotiation.
+
+### 3. Three-Plane Structural Separation
 
 **VCP** does not define a structural separation between evidence capture,
 evidence access, and evidence interpretation.
@@ -104,17 +137,17 @@ evidence access, and evidence interpretation.
   systems) that consume evidence through the Access Plane. No modification
   authority over evidence.
 
-This separation is enforced by network segmentation and IAM policy — structural
-controls, not administrative procedure. The planes cannot collapse through
-misconfiguration because the access controls are mechanically enforced.
+This separation is enforced by network segmentation and IAM policy —
+structural controls, not administrative procedure. The planes cannot collapse
+through misconfiguration because the access controls are mechanically enforced.
 
 The practical consequence: in CVS, no interpretation tool can modify captured
 evidence, and no evidence modification can be disguised as an access operation.
-In systems without this structural separation, the distinction between capture,
-access, and interpretation exists only as administrative policy, which is
-inadequate for high-assurance contexts.
+In systems without structural plane separation, the distinction between capture,
+access, and interpretation exists only as administrative policy — inadequate
+for high-assurance regulatory, insurance, or legal contexts.
 
-### 3. Administrative Independence
+### 4. Administrative Independence
 
 **VCP** does not specify a requirement for administrative independence between
 the witness layer and the observed system.
@@ -129,17 +162,17 @@ operator's own records would not be. An operator cannot suppress or alter CVS
 evidence without detectable action against a system they do not administratively
 control. The independence is structural, not procedural.
 
-### 4. Disclosure Kernel
+### 5. Disclosure Kernel
 
 **VCP** does not define a selective disclosure mechanism.
 
 **CVS** includes a Disclosure Kernel — a structured mechanism for selective
 revelation of evidence to authorized parties without overexposure. A party
 entitled to audit a specific event receives cryptographic proof of that event
-without receiving the full evidence chain. The Disclosure Kernel allows CVS
-to serve multiple parties with different access levels against the same
-underlying evidence without creating multiple copies or revealing more than
-each party's authorization permits.
+without receiving the full evidence chain. This allows CVS to serve regulators,
+insurers, and opposing counsel with scoped evidence packages — sufficient to
+answer the specific question, insufficient to constitute wholesale exposure of
+proprietary operational data.
 
 ---
 
@@ -152,11 +185,12 @@ each party's authorization permits.
 | Hash-chained events | Yes | Yes |
 | Merkle anchoring | Yes | Yes |
 | External ledger anchor | Yes | Yes |
-| Time source | PTPv2 / NTP / best-effort | GPS-disciplined hardware oscillator |
+| External time anchor | PTPv2 / NTP / best-effort (operator-adjacent) | Public ledger consensus — operator-independent |
+| Fail-open | Non-blocking design intent | Non-negotiable conformance requirement |
 | Three-plane separation | Not defined | Structural — enforced by IAM and network segmentation |
 | Administrative independence | Not specified | Architectural requirement |
 | Selective disclosure | Not defined | Disclosure Kernel |
-| Primary domain | Algorithmic trading / financial markets | Any execution surface |
+| Deployment scope | Algorithmic trading / financial markets | Any execution surface — including on-premises |
 | License | Standards organization model | Apache 2.0 — fully open |
 
 ---
@@ -172,10 +206,10 @@ model. Both are available for implementation. The base sidecar pattern belongs
 to neither — it is prior art predating both, established by CVS's December 17,
 2025 genesis commit.
 
-Derivative implementations of CVS — specific GPS hardware integrations,
-managed witness services, certification wrappers, interpretation platforms —
-are fully patentable and commercialisable by their creators. See
-`CVS_ARCHITECTURE §-1.5` for the complete open commons model.
+Derivative implementations of CVS — managed witness services, certification
+wrappers, interpretation platforms, domain-specific deployments — are fully
+patentable and commercialisable by their creators. See `CVS_ARCHITECTURE §-1.5`
+for the complete open commons model.
 
 ---
 
@@ -192,7 +226,7 @@ Canonical commitment record: `CANONICAL_COMMITMENT.md`
 
 ---
 
-*CVS and VCP — Parallel Development Acknowledgment | Version 1.0 | May 2026*
+*CVS and VCP — Parallel Development Acknowledgment | Version 1.1 | May 2026*
 *Author: Jonathan M. Watson*
 *Released under Apache 2.0 consistent with Evidence-Sidecar repository licensing.*
 *This document does not constitute legal advice.*
