@@ -1,37 +1,30 @@
-# Pre-Hardening Notice — CVS Repository
+# Repository Status — CVS
 
-This repository represents a pre-seal hardening pass of the CVS
-(Cryptographic Verification Sidecar) specification.
-The architectural constraints defined herein are directionally stable
-and reflect the intended evidence formation model.
+**Status: Active**
+**Hardening phase complete: May 2026**
 
-However:
+The pre-hardening phase for this repository is complete. All documents
+have been version-sealed. Pre-hardening banners and notices have been
+removed throughout the repository.
 
-- Language is still being tightened to eliminate ambiguity at the
-  evidence boundary
-- Implementation guidance is being refined to prevent misinterpretation
-- Formal normative specification (MUST / MUST NOT compliance framework)
-  is in progress
-
-This repository SHOULD NOT be treated as a final, version-sealed
-specification.
-
-Implementations based on this repository must assume that:
-
-- wording may be further hardened
-- constraints may be clarified but not relaxed
-- non-conformant patterns identified here will remain non-conformant
-  in final versions
-
-A formal versioned and hash-sealed release will follow this hardening
-phase.
-
-Until then, this repository should be used as:
-
-- a directional implementation constraint reference
-- a correction layer for misinterpretations
-- a pre-normative architectural guide
+This notice is preserved as a historical record of the hardening phase.
+It is no longer operative.
 
 ---
 
-**End of pre-seal notice.**
+## Hardening Phase Record
+
+| Event | Date |
+|---|---|
+| Repository genesis | December 17, 2025 |
+| Hardening phase opened | March 2026 |
+| Canonical specification sealed | March 24, 2026 |
+| BUILDERS/ folder added | May 2026 |
+| Hardening phase closed | May 2026 |
+
+Archive hashes for sealed states are recorded in `CANONICAL_COMMITMENT.md`.
+
+---
+
+*This notice was previously titled PRE_HARDENING_NOTICE.md.*
+*Its content has been updated to reflect sealed status.*
