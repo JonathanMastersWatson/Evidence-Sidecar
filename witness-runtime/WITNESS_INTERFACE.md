@@ -2,11 +2,17 @@
 
 ## Purpose
 
-The witness runtime receives execution-boundary events from 512 and emits deterministic CVS Evidence Objects.
+The witness runtime receives execution-boundary events from 512 and
+emits deterministic CVS Evidence Objects.
 
-It sits beside the gate.
+It sits beside the gate. It is not inside the gate.
 
-It is not inside the gate.
+The witness runtime operates within the **Capture Plane** of the CVS
+three-plane architecture (`CVS_ARCHITECTURE_v3.2 §2.2`). The Capture
+Plane observes execution, constructs Evidence Objects, chains them
+cryptographically, and anchors commitments to a public settlement
+ledger. It has no inbound connections from the Access or
+Interpretation Planes. It never blocks execution.
 
 ---
 
@@ -14,15 +20,18 @@ It is not inside the gate.
 
 The witness runtime must:
 
-- receive boundary events from 512
-- construct a canonical Evidence Object
-- hash the Evidence Object deterministically
-- preserve witness-chain continuity
+- receive boundary events from 512 asynchronously
+- construct a canonical Evidence Object per `EVIDENCE_OBJECT_SCHEMA.md`
+- hash the Evidence Object deterministically per `CANONICALIZATION.md`
+- produce a `witness_attestation` signature via HSM — private key
+  never leaves the HSM boundary
+- preserve witness-chain continuity via `previous_evidence_hash`
 - optionally batch Merkle leaves
 - emit anchor-ready output
-- record witness-layer gaps
+- record witness-layer gaps explicitly
 - tolerate delayed anchoring
 - tolerate temporary storage failure
+- queue gap evidence locally for retry on storage restoration
 
 ---
 
@@ -43,7 +52,7 @@ The witness runtime must not:
 
 ## Boundary Event Input
 
-The minimum boundary event received by the witness should include:
+The minimum boundary event received by the witness must include:
 
 ```json
 {
@@ -51,8 +60,8 @@ The minimum boundary event received by the witness should include:
   "decision_id": "string",
   "runtime_id": "string",
   "decision": "ALLOW|DENY",
-  "invariant_result": "string",
-  "invariant_id": "string",
+  "invariant_result": "ALL_PASS|inv_|evaluation_error",
+  "invariant_id": "string|null",
   "proposal_hash": "string",
   "decision_hash": "string",
   "specification_hash": "string",
@@ -60,15 +69,27 @@ The minimum boundary event received by the witness should include:
 }
 ```
 
-The witness may add witness-specific timing and metadata.
+**`invariant_result` values:**
 
-The witness may not add interpretation.
+- `ALL_PASS` — decision is ALLOW; all seven invariants passed
+- `inv_<N>` — decision is DENY; invariant N failed (N = 1–7)
+- `evaluation_error` — decision is DENY; gate failed internally
+
+**`invariant_id` values:**
+
+- `null` on ALLOW — no single invariant identified
+- `inv_<N>` on DENY invariant failure
+- `null` on DENY evaluation_error — no invariant was evaluated
+
+The witness records the values emitted by the boundary. It does not
+reinterpret them.
 
 ---
 
 ## Witness Output
 
-The primary output is a canonical Evidence Object.
+The primary output is a canonical Evidence Object per
+`EVIDENCE_OBJECT_SCHEMA.md`.
 
 Secondary outputs may include:
 
@@ -95,24 +116,26 @@ A conformant implementation may use:
 - durable message queue
 
 The gate must not wait for witness completion.
-
 The gate must not depend on witness success.
 
 ---
 
 ## Recommended Runtime Flow
 
-```text
-1. Boundary emits decision event.
-2. Witness receives event asynchronously.
-3. Witness constructs Evidence Object.
-4. Witness calculates evidence_hash.
-5. Witness calculates merkle_leaf_hash.
-6. Witness writes Evidence Object to local durable store or queue.
-7. Witness batches leaves when available.
-8. Witness emits anchor-ready batch payload.
-9. Anchor result updates external anchoring metadata profile without changing original evidence semantics.
-```
+Boundary emits decision event.
+Witness receives event asynchronously.
+Witness constructs Evidence Object.
+Witness sets evidence_hash to null.
+Witness canonically serializes Evidence Object.
+Witness calculates evidence_hash.
+Witness signs evidence_object_id via HSM → witness_attestation.
+Witness calculates merkle_leaf_hash.
+Witness writes Evidence Object to local durable store or queue.
+Witness batches leaves when available.
+Witness emits anchor-ready batch payload.
+Anchor result updates anchor_status in witness metadata — does
+not modify original evidence semantics.
+
 
 ---
 
@@ -130,16 +153,35 @@ Anchoring failure does not affect execution admissibility.
 
 ## Chain Continuity Rule
 
-The witness should preserve continuity by linking each Evidence Object to the previous Evidence Object through `previous_evidence_hash`.
+The witness preserves continuity by linking each Evidence Object to
+the previous one via `previous_evidence_hash`.
 
 If continuity cannot be preserved, the witness must emit gap evidence.
 
-The chain break is evidence-layer degradation, not execution-layer authority.
+The chain break is evidence-layer degradation — not execution-layer
+authority.
 
 ---
 
 ## External State Rule
 
-The witness must not fetch external state during Evidence Object construction.
+The witness must not fetch external state during Evidence Object
+construction.
 
-External state creates non-determinism and breaks independent replay verification.
+External state creates non-determinism and breaks independent replay
+verification.
+
+---
+
+## Normative References
+
+| Document | Relevance |
+|---|---|
+| `CVS_ARCHITECTURE_v3.2 §2.2` | Three-plane architecture — Capture Plane definition |
+| `CVS_ARCHITECTURE_v3.2 §3.5` | Full signing sequence and HSM custody requirement |
+| `CVS_ARCHITECTURE_v3.2 §5.2` | Canonical serialization rules |
+| `CVS_IMPLEMENTATION_v2.7 §1.1` | Capture Plane normative behaviours |
+| `EVIDENCE_OBJECT_SCHEMA.md` | Canonical Evidence Object schema |
+| `CANONICALIZATION.md` | Hashing and serialization rules |
+| `FAILURE_AND_GAPS.md` | Gap semantics and prohibited gap behaviour |
+| `512_IMPLEMENTATION_v3.3 §3.6` | Gate fail-open handler — gate-layer failure |
