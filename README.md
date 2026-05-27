@@ -1,305 +1,387 @@
 # CVS — Cryptographic Verification Sidecar
 
-Licensed under the Apache License, Version 2.0.
-See `LICENSE` and `LEGAL_NOTICE.md` for details.
+Logs are not proof.
+
+As AI systems and autonomous infrastructure begin operating at machine speed, traditional audit systems become insufficient for:
+- regulators
+- insurers
+- courts
+- counterparties
+- enterprise governance
+- operational liability
+
+Internal logs are operator-controlled artifacts.
+
+CVS creates independent cryptographic evidence of what actually occurred during execution.
+
+Not screenshots.
+Not operator testimony.
+Not compliance narratives.
+Not mutable audit trails.
+
+Cryptographic evidence generated outside the production system itself.
 
 ---
 
-This repository defines a **reference architecture for independent,
-fail-open evidence systems**.
+# The Problem
 
-It specifies how complex digital systems can produce verifiable,
-independently defensible evidence of what occurred — without
-interrupting execution, exposing sensitive data, or concentrating
-authority.
+Modern systems increasingly operate faster than humans can supervise.
 
-This is not a product.
-This is not a platform.
-This is not a service.
+AI agents are beginning to:
+- execute transactions
+- coordinate systems
+- operate infrastructure
+- trigger irreversible actions
+- manage workflows autonomously
+- interact across machine-to-machine environments
 
-It is an architectural specification.
+When failures occur, organizations need to answer:
+- What actually happened?
+- What executed?
+- In what order?
+- Under which constraints?
+- Was evidence modified?
+- Can an external party independently verify it?
 
----
+Traditional logs fail because they:
+- are internally controlled
+- can be modified
+- lack independent verification
+- do not preserve trust boundaries
+- are difficult to validate externally
+- become disputed after failure
 
-## Canonical Specification
-
-The canonical CVS specification is defined exclusively by the
-documents in `/08_CANON/`:
-
-- `/08_CANON/CVS_ARCHITECTURE_v{M}.{m}.md` — current canonical version
-- `/08_CANON/CVS_IMPLEMENTATION_v{M}.{m}.md` — current canonical version
-
-Cryptographic fingerprints of these files are recorded in:
-
-- `/08_CANON/CANON_HASHES.md`
-
-If any conflict exists between documents in this repository,
-the files in `/08_CANON/` take precedence.
-
-Version numbers are immutable. Canonical documents must not be
-silently modified. Subsequent revisions must increment version numbers.
+CVS exists because machine-speed systems require independent evidence generation.
 
 ---
 
-## What CVS Is
+# What CVS Is
 
-A CVS is an external witness that:
+CVS is an independent witness architecture.
 
-- observes system events out-of-band
-- records cryptographic evidence
-- preserves time ordering and detectability of gaps
-- anchors proof to a neutral public settlement layer
+It operates alongside execution systems without interrupting execution.
 
-The sidecar does not execute logic.
-It does not enforce policy.
-It does not decide outcomes.
+CVS:
+- observes events out-of-band
+- creates cryptographic evidence objects
+- preserves ordering and detectability of gaps
+- anchors proof externally
+- enables independent verification
+
+The sidecar does not:
+- execute business logic
+- enforce policy
+- make decisions
+- approve actions
+- govern execution
 
 It witnesses.
 
 ---
 
-## What CVS Is Not
+# Why Existing Audit Systems Fail
 
-This repository does not define:
+Most enterprise audit systems were designed for:
+- human-operated workflows
+- delayed review cycles
+- centralized trust assumptions
+- post-event analysis
+- cooperative disclosure environments
 
-- a commercial offering
-- a hosted service
-- an SDK or API
-- a certification or conformance badge
-- an enforcement or governance system
-- a truth or correctness engine
-- an access control system
-- a monitoring or logging tool
+Machine-speed systems invalidate those assumptions.
 
-Commercial implementations may exist elsewhere.
-They are explicitly out of scope here.
-
----
-
-## Core Properties
-
-A CVS-Conforming implementation satisfies these non-negotiable
-constraints:
-
-- **Fail-Open** — evidence systems must never block, delay, or
-  interrupt execution
-
-- **Witness-Only** — the sidecar may observe and record, but never
-  act, decide, or enforce
-
-- **Authority Limits** — no hidden, delegated, or implicit power
-  is permitted
-
-- **Selective Disclosure** — transparency must be precise, bounded,
-  and minimal
-
-- **Independent Verification** — verification must be possible
-  without trusting the operator
-
-These properties are defined in detail within the repository
-and are normative.
-
----
-
-## Architecture Overview
-
-The architecture consists of four explicitly separated layers:
-
-1. **Evidence Model**
-   Minimal, immutable Evidence Objects chained cryptographically
-   to preserve integrity, ordering, and detectable gaps.
-
-2. **Disclosure Kernel**
-   A proof minimisation mechanism for scoped evidence release
-   without over-exposure. Not an access control system.
-
-3. **Settlement Layer**
-   A neutral public ledger used solely for anchoring cryptographic
-   receipts proving existence at a point in time.
-
-4. **Commercial Layer**
-   A funding mechanism that pays for settlement without influencing
-   evidence generation, disclosure, or verification.
-
-Each layer is isolated to prevent authority bleed.
-
----
-
-## Settlement and Ledgers
-
-This architecture requires a settlement layer with:
-
-- deterministic finality
-- predictable and bounded cost
-- public verifiability
-- no execution-layer coupling
-
-The XRP Ledger satisfies these requirements and is profiled in
-this repository. An alternative ledger profile is included to
-demonstrate ledger interchangeability.
-
-The architecture is ledger-agnostic by design.
-
----
-
-## Who This Is For
-
-| Audience | Start here |
-|---|---|
-| Executives & General Readers | `public/EXECUTIVE_SUMMARY.md` |
-| CFOs & Risk Committees | `public/CFO_BRIEF.md` |
-| Regulators & Auditors | `public/REGULATOR_NOTE.md` |
-| Technology Vendors | `public/VENDOR_SUPPLY_NOTE.md` |
-| Public Service & Government | `public/PUBLIC_SERVICE_GOVERNMENT_NOTE.md` |
-| Engineers & Architects | Start with `00_INTENT/`, read in order |
-
----
-
-## Industry Applicability
-
-This architecture applies wherever:
-
-- outcomes are disputed after the fact
-- internal logs are not trusted
-- execution cannot be interrupted
+At scale:
+- execution outruns human observation
+- logs become operator assertions
+- disputes emerge after irreversible actions
 - liability attaches retroactively
+- internal evidence loses independence
 
-Illustrative industry mappings: broadcast and digital media,
-financial markets, AI systems, supply chains, public sector systems.
+Post-hoc audit is no longer sufficient.
 
-Mappings are illustrative, not exhaustive.
-
----
-
-## Normative Documents
-
-The following documents are normative and apply to the architecture
-as a whole:
-
-- `CONFORMANCE.md` — minimum behavioral requirements for a
-  CVS-Conforming implementation; includes operational states,
-  binary test checklist, and non-conformant patterns
-
-- `ANTI_DRIFT.md` — non-negotiable architectural boundaries;
-  layer separation, fixed observation model, prohibited configurations
-
-- `VERIFICATION_PROTOCOL.md` — canonical six-step verification
-  protocol for auditors, regulators, and independent reviewers
-
-- `INTEROPERABILITY.md` — how independent implementations verify,
-  exchange, and validate evidence without shared control
+Independent evidence becomes necessary.
 
 ---
 
-## Guidance Documents
+# Why CVS Matters
 
-The following documents are informational only:
+Without independent evidence systems:
+- autonomous systems become difficult to insure
+- enterprises cannot independently prove execution history
+- regulators cannot reliably validate claims
+- counterparties lose trust in internal records
+- forensic reconstruction becomes economically expensive
+- attribution collapses under dispute
 
-- `ADOPTION.md` — incremental path for organisations to introduce
-  the architecture without disrupting existing systems
-
-- `CRYPTOGRAPHY.md` — cryptographic minimum properties and
-  implementation considerations; does not mandate specific algorithms
-
-Normative documents use MUST / MUST NOT language.
-Guidance documents are informational only.
-
----
-
-## Legal and Regulatory Posture
-
-This repository provides technical architecture, not legal advice.
-
-It does not guarantee evidentiary admissibility in any jurisdiction.
-
-Its purpose is to make evidence stronger, more independent, and more
-defensible — not to replace legal judgment, regulatory authority,
-or due process.
-
-See `LEGAL_NOTICE.md` for limitation of responsibility,
-Apache 2.0 attribution, and open commons declaration.
+CVS exists to establish defensible evidence after execution occurs.
 
 ---
 
-## Relationship to 512
+# Core Properties
 
-CVS is compatible with, but independent of, the 512 constraint set.
+A CVS-conforming implementation must satisfy these properties:
 
-512 defines discovered constraints governing execution-time legitimacy.
-CVS defines one witness architecture that can operate alongside
-systems satisfying 512's properties.
+| Property | Requirement |
+|---|---|
+| Fail-Open | Evidence systems must never block execution |
+| Witness-Only | Observation without enforcement authority |
+| Independent Verification | External verification without trusting operators |
+| Selective Disclosure | Minimal bounded evidence release |
+| Detectable Gaps | Missing evidence must remain observable |
+| Immutable Ordering | Evidence chains preserve sequence integrity |
+| Authority Separation | Witness layer cannot control execution |
 
-Neither governs the other.
-CVS may operate without 512. Systems satisfying 512's properties
-may use witness architectures other than CVS.
+These properties are non-negotiable.
 
 ---
 
-## CVS Evidence Boundary Interface (CVS-EBI)
+# High-Level Architecture
 
-This repository also defines the CVS Evidence Boundary Interface
-(CVS-EBI).
+```text
+Production System
+        ↓
+Execution Event
+        ↓
+[ CVS Witness Layer ]
+        ↓
+Evidence Object
+        ↓
+Hash Chain / Merkle Structure
+        ↓
+External Ledger Anchor
+        ↓
+Independent Verification
+```
 
-CVS-EBI specifies the deterministic evidence emission interface used
-by CVS-conforming witness runtimes.
+CVS operates outside the execution path.
 
-It defines:
+Execution continues whether CVS is present or absent.
 
-- canonical Evidence Object structure
+This separation is mandatory.
+
+---
+
+# The Four Architectural Layers
+
+## 1. Evidence Model
+
+Immutable Evidence Objects chained cryptographically to preserve:
+- integrity
+- ordering
+- detectability of gaps
+
+---
+
+## 2. Disclosure Kernel
+
+Selective evidence disclosure without over-exposure.
+
+Not an access-control system.
+
+---
+
+## 3. Settlement Layer
+
+Public cryptographic anchoring layer providing:
+- timestamping
+- existence proof
+- independent verification
+
+The ledger does not govern execution.
+
+---
+
+## 4. Commercial Layer
+
+Funding and operational mechanisms supporting:
+- settlement
+- infrastructure
+- operational continuity
+
+Commercial incentives must not influence evidence generation.
+
+---
+
+# Relationship to 512
+
+512 governs execution.
+
+CVS proves what occurred.
+
+512 decides.
+CVS witnesses.
+
+512 and CVS are architecturally independent.
+
+CVS may operate without 512.
+
+Systems satisfying 512 properties may use witness architectures other than CVS.
+
+---
+
+# Who This Repository Is For
+
+| Audience | Start Here |
+|---|---|
+| Executives / Boards | `public/EXECUTIVE_SUMMARY.md` |
+| CFOs / Risk Committees | `public/CFO_BRIEF.md` |
+| Regulators / Auditors | `public/REGULATOR_NOTE.md` |
+| Technology Vendors | `public/VENDOR_SUPPLY_NOTE.md` |
+| Government / Public Sector | `public/PUBLIC_SERVICE_GOVERNMENT_NOTE.md` |
+| Engineers / Architects | `00_INTENT/` |
+
+---
+
+# START HERE
+
+## Executives
+Read:
+- `public/EXECUTIVE_SUMMARY.md`
+
+## Regulators and Auditors
+Read:
+- `VERIFICATION_PROTOCOL.md`
+- `CONFORMANCE.md`
+
+## Engineers
+Read:
+- `/08_CANON/CVS_ARCHITECTURE_v3.0.md`
+- `/08_CANON/CVS_IMPLEMENTATION_v3.0.md`
+
+## Vendors and Architects
+Read:
+- `INTEROPERABILITY.md`
+- `ANTI_DRIFT.md`
+
+---
+
+# Canonical Specification
+
+The canonical CVS specification is defined exclusively by:
+
+- `/08_CANON/CVS_ARCHITECTURE_v{M}.{m}.md`
+- `/08_CANON/CVS_IMPLEMENTATION_v{M}.{m}.md`
+
+Cryptographic fingerprints are recorded in:
+- `/08_CANON/CANON_HASHES.md`
+
+Canonical versions are immutable.
+
+Subsequent revisions must increment version numbers.
+
+---
+
+# Industry Applicability
+
+CVS applies wherever:
+- execution cannot be interrupted
+- liability emerges after execution
+- logs are insufficient
+- independent proof is required
+- disputes occur after the fact
+
+Illustrative sectors include:
+- AI systems
+- finance
+- supply chains
+- media systems
+- industrial infrastructure
+- public sector systems
+
+---
+
+# Normative Documents
+
+The following documents are normative:
+
+- `CONFORMANCE.md`
+- `ANTI_DRIFT.md`
+- `VERIFICATION_PROTOCOL.md`
+- `INTEROPERABILITY.md`
+
+Normative documents use:
+- MUST
+- MUST NOT
+
+language.
+
+---
+
+# Guidance Documents
+
+The following documents are informational:
+
+- `ADOPTION.md`
+- `CRYPTOGRAPHY.md`
+
+These documents are explanatory only.
+
+---
+
+# CVS Evidence Boundary Interface (CVS-EBI)
+
+This repository also defines CVS-EBI.
+
+CVS-EBI specifies:
+- deterministic evidence emission semantics
+- Evidence Object structure
 - witness runtime boundaries
-- deterministic hashing semantics
-- proof validation semantics
-- fail-open gap recording behavior
-- replay and independent verification flows
+- replay validation flows
+- independent verification semantics
+- fail-open evidence behavior
 
-CVS-EBI does not alter the canonical CVS architecture.
+CVS-EBI defines interface semantics only.
 
-It defines interface and evidence semantics only.
+It does not alter the canonical CVS architecture.
 
-The CVS-EBI work is organized into the following directories:
-
+Directories:
 - `/evidence-spec/`
 - `/witness-runtime/`
 - `/proof-validation/`
 - `/diagrams/`
 - `/docs/`
 
-CVS-EBI remains subordinate to the canonical architecture defined in
-`/08_CANON/`.
-
-If any conflict exists between CVS-EBI documents and canonical CVS
-documents, the canonical CVS documents take precedence.
+Canonical `/08_CANON/` documents always take precedence.
 
 ---
 
-## Status
+# Legal and Regulatory Posture
+
+This repository defines technical architecture only.
+
+It does not:
+- provide legal advice
+- guarantee evidentiary admissibility
+- replace due process
+- replace regulatory authority
+
+Its purpose is to strengthen evidence integrity and independent verification.
+
+---
+
+# Status
 
 This repository is intentionally complete.
 
-Future changes should be additive, restrained, and justified by
-real-world failure modes.
+Future changes should be:
+- additive
+- restrained
+- justified by operational failure modes
 
 Complexity is not a feature.
 
 ---
 
-## Reference
+# Licensing
 
-- `PRIMITIVE_BOUNDARY.md` — what CVS defines and what it does not;
-  derivative responsibility
-- `UPSTREAM.md` — three-layer stack (Constraint Architecture / 512 /
-  CVS) and upstream constraint definition responsibility
-- `02_EVIDENCE_MODEL/GATE_OUTPUT_MATRIX.md` — gate completion states
-  and witness classification matrix
-- `LIVING_DOCUMENTS.md` — which documents are dynamic and subject
-  to revision
+Licensed under the Apache License, Version 2.0.
+
+See:
+- `LICENSE`
+- `LEGAL_NOTICE.md`
 
 ---
 
-## Final Note
+# One Sentence Summary
 
-Trust is no longer established at runtime.
-
-It is established after the fact, under scrutiny.
-
-This architecture exists for that moment.
+CVS defines an independent cryptographic witness architecture that creates externally verifiable evidence of machine-speed execution without interrupting execution itself.
