@@ -348,10 +348,11 @@ not invariant failure):
 }
 ```
 
-In production, this condition should trigger the gate's fail-open
-handler rather than producing a denial. See
-`512_IMPLEMENTATION_v3.3 §3.6`. The witness records whatever the
-gate emitted.
+In production, this condition triggers the infrastructure-failure
+handler, which produces Evaluation-Unavailable DENY — the commit
+path remains closed. See `512_IMPLEMENTATION_v3.4 §3.6` and
+`512-core/KERNEL/I6_CONSTITUTIONAL_ELABORATION.md`. The witness
+records the DENY Evidence Object and CVS sidecar emits a gap record.
 
 ---
 
