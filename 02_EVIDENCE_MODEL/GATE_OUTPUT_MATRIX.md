@@ -23,10 +23,11 @@ The gate produces exactly two output values:
 
 There is no third gate output value.
 
-When the gate cannot complete evaluation, it produces **no output**.
-The witness layer records the resulting ungoverned period as an
-**evidence chain gap**. That gap record is a witness layer
-classification — not a gate output.
+When the gate cannot complete evaluation, the infrastructure-failure
+handler produces **DENY** (deny_cause: evaluation_unavailable).
+The commit path remains closed. The CVS sidecar records the
+unavailability period as an **evidence chain gap**. That gap record
+is a CVS sidecar record — not a gate output.
 
 ---
 
@@ -36,7 +37,7 @@ classification — not a gate output.
 |---|---|---|---|---|
 | **Normal — ALLOW** | Yes | Yes — all seven pass | Yes — ALLOW | Validation Result event emitted; Evidence Object contains ALLOW, spec hash, per-invariant pass results |
 | **Normal — DENY** | Yes | Yes — one or more fail | Yes — DENY | Validation Result event emitted; Evidence Object contains DENY, spec hash, per-invariant results, violated constraint detail |
-| **Fail-open — gate unavailable** | No | No — evaluation did not begin or complete | No — gate produced no output | Evidence chain gap record emitted; gap duration, reason, and executing identity recorded; execution proceeded under Invariant 6 |
+| **Evaluation-Unavailable DENY — gate unavailable** | No | No — evaluation did not begin or complete | Yes — DENY (evaluation_unavailable) | DENY Evidence Object emitted with failure cause and retry path; CVS sidecar emits gap record; commit path remains closed; execution does not proceed |
 | **Per-constraint unevaluated** | Yes (partial) | No — one or more constraints could not be evaluated due to missing input | Yes — DENY (or no overall result if gate cannot resolve) | Validation Result event emitted with unevaluated indicators per affected constraint; see §Per-Constraint Unevaluated below |
 | **Sidecar unavailable** | Gate state independent | Gate state independent | Gate result may exist locally | Witness layer gap in evidence chain; Evidence Objects queued locally; gap resolved on sidecar recovery |
 
@@ -81,32 +82,40 @@ Execution does not proceed. Commit path remains closed.
 
 ---
 
-### Fail-Open — Gate Unavailable
+### Evaluation-Unavailable DENY — Gate Unavailable
 
 The gate is unavailable or evaluation timed out. Evaluation did
-not complete. The gate produces no output.
+not complete. The infrastructure-failure handler produces DENY
+(deny_cause: evaluation_unavailable). The commit path remains
+closed. Execution does not proceed.
 
-Execution proceeds because Invariant 6 requires fail-open behaviour.
-Blocking execution on gate failure would itself be an I6 violation.
-
-Gate emits: nothing  
-Fail-open handler emits: gap record to witness layer  
-Witness emits: evidence chain gap record containing:
-- `gap_start`: timestamp of last successfully written Evidence Object
-- `gap_end`: timestamp of first successfully written Evidence Object
-  after recovery
-- `gap_duration_seconds`: duration of ungoverned period
+Gate emits: DENY (deny_cause: evaluation_unavailable)  
+Infrastructure-failure handler emits: DENY Evidence Object to witness layer  
+CVS sidecar emits: gap record containing:
+- `gap_start`: timestamp when gate became unavailable
+- `gap_end`: timestamp when gate recovered
+- `gap_duration_seconds`: duration of unavailability period
 - `gap_reason`: gate unavailable / evaluation timeout / other
-- `executing_identity`: identity executing during gap window
+- `gate_output_during_gap`: deny_evaluation_unavailable
 - `spec_hash`: hash of constraint set that would have been evaluated
 
 **A gap record is not an ALLOW.** Constraint satisfaction was not
-established. Execution proceeded because availability is prioritised
-over blocking — not because the constraints passed.
+established. The commit boundary held — execution did not proceed.
 
-Validation Result (Observation Point 2) is absent for this event.
-The gap record replaces it in the evidence chain.
+The DENY Evidence Object contains:
+- `overall_result`: DENY
+- `deny_cause`: evaluation_unavailable
+- `failure_cause`: gate unavailable / evaluation timeout / other
+- `retry_permitted`: true
+- `spec_hash`: hash of active compiled constraint set
 
+Validation Result (Observation Point 2) is present for this event
+and contains the Evaluation-Unavailable DENY. The gap record is
+a supplementary CVS sidecar record documenting the unavailability
+period.
+
+See `512-core/KERNEL/I6_CONSTITUTIONAL_ELABORATION.md` for the
+authoritative elaboration of the Evaluation-Unavailable DENY doctrine.
 ---
 
 ### Per-Constraint Unevaluated
@@ -187,12 +196,12 @@ An ALLOW result is only valid when all seven invariants were
 evaluated and all seven passed. An ALLOW with any unevaluated
 constraint is a non-conformant result.
 
-**Rule 5 — Execution during a gap is ungoverned, not allowed.**
-Execution that proceeds during a gate unavailability period is
-not evidence of satisfaction. It is evidence of an ungoverned
-period. The gap record proves execution occurred without
-constraint evaluation — not that execution was evaluated and
-permitted.
+**Rule 5 — Gap records confirm the commit boundary held.**
+Under the Evaluation-Unavailable DENY doctrine, execution does
+not proceed during gate unavailability. The gap record documents
+the unavailability period and confirms that DENY was produced
+and the commit path remained closed — not that execution occurred
+without evaluation.
 
 ---
 
