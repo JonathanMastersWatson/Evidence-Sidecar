@@ -34,9 +34,9 @@ CVS-specific constraints.
 - Enforces pre-committed constraints deterministically
 - Produces binary output only: ALLOW or DENY
 - Contains no interpretation, discretion, or state accumulation
-- When evaluation cannot complete: produces no output; execution
-  proceeds under fail-open (Invariant 6); the witness layer records
-  the ungoverned period as an evidence chain gap
+- When evaluation cannot complete: infrastructure-failure handler
+  produces DENY (evaluation_unavailable); commit path remains closed;
+  execution does not proceed; CVS sidecar records gap record
 
 ### 1.2 Witness Layer (CVS)
 
@@ -80,12 +80,13 @@ CVS emits exactly three event types per evaluated execution:
 2. **Validation Result** — constraint evaluation outcome (ALLOW or DENY)
 3. **Post-Execution** — actual execution outcome
 
-On fail-open events — where the gate cannot complete evaluation:
+On Evaluation-Unavailable DENY events — where the gate cannot
+complete evaluation:
 
 - Pre-Validation is emitted
-- Validation Result is absent — the gate produced no output
-- A gap record replaces Validation Result in the evidence chain
-- Post-Execution is emitted
+- Validation Result is emitted — containing DENY (evaluation_unavailable)
+- CVS sidecar emits a gap record documenting the unavailability period
+- Post-Execution is absent — execution did not proceed
 
 These events are:
 
