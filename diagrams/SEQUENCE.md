@@ -22,11 +22,12 @@ sequenceDiagram
 
 ---
 
-## Gate Fail-Open — Ungoverned Execution Gap
+## Evaluation-Unavailable DENY — Gate Cannot Evaluate
 
 This sequence models gate-layer failure: the gate itself cannot
-evaluate. The fail-open handler engages, execution continues, and
-the witness records the ungoverned period as an evidence chain gap.
+evaluate. The infrastructure-failure handler produces DENY —
+the commit path remains closed, execution does not proceed, and
+the CVS sidecar records the unavailability period as a gap record.
 
 This is distinct from witness-layer failure (see below).
 
@@ -34,23 +35,23 @@ This is distinct from witness-layer failure (see below).
 sequenceDiagram
     participant P as Proposal Source
     participant G as 512 Commit Gate
-    participant F as Fail-Open Handler
+    participant F as Infrastructure-Failure Handler
     participant C as Commit Target
-    participant W as CVS Witness
+    participant W as CVS Sidecar
     participant S as Evidence Store
 
     P->>G: Submit proposal
     G->>G: Attempt invariant evaluation
     G--xG: Gate unavailable or evaluation timeout
-    G->>F: Engage fail-open handler
-    F->>C: Commit path opens (execution continues)
-    F-->>W: Emit gap event (async)
-    W->>W: Construct gap Evidence Object
-    W->>W: Set gap_detected true, gap_reason WITNESS_UNAVAILABLE
-    W->>W: Set decision null — no gate output was produced
-    W->>S: Store gap evidence
-    Note over G,C: Execution proceeds — constraint satisfaction was not established
-    Note over W,S: Gap is permanently observable in evidence chain
+    G->>F: Engage infrastructure-failure handler
+    F->>P: DENY (evaluation_unavailable, retry_permitted: true)
+    Note over F,C: Commit path remains closed — execution does not proceed
+    F-->>W: Emit DENY Evidence Object (async)
+    F-->>W: Emit gap record (async)
+    W->>W: Construct DENY Evidence Object (deny_cause: evaluation_unavailable)
+    W->>W: Construct gap record (gate_output_during_gap: deny_evaluation_unavailable)
+    W->>S: Store DENY evidence and gap record
+    Note over W,S: DENY and gap permanently observable in evidence chain
 ```
 
 ---
