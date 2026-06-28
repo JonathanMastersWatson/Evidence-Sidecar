@@ -1,7 +1,7 @@
 # 512: The Commit Gate — Implementation Reference
 
 **Jonathan M. Watson | 512 / CVS Architecture**
-**Version 3.3 | May 2026**
+**Version 3.4 | June 2026**
 **Canonical Repository:** github.com/JonathanMastersWatson/512
 **Canonical Kernel Commitment:** SHA-256: `7B08C024B77A24830C15E7952D6E54BED383AA960F4C74A71FF95CE51F4D80F5`
 
@@ -120,7 +120,7 @@ This document describes how one may construct a **Commit Gate** satisfying 512's
 
 This document is an engineering build guide. It specifies, in executable terms, how to construct a Commit Gate that satisfies 512's observable properties: a minimal, immutable, binary enforcement mechanism positioned at the commit boundary of a machine-speed execution system.
 
-What you are building is a deterministic function: `(intent, context, constraints) → {allow, deny}`. It executes in 10–50μs in software, under 5μs on dedicated hardware. It enforces seven pre-committed invariants without interpretation. It fails open. It integrates with a witness layer that produces independently verifiable execution evidence.
+What you are building is a deterministic function: `(intent, context, constraints) → {allow, deny}`. It executes in 10–50μs in software, under 5μs on dedicated hardware. It enforces seven pre-committed invariants without interpretation. On infrastructure failure, it produces Evaluation-Unavailable DENY — the commit boundary holds. It integrates with a witness layer that produces independently verifiable execution evidence.
 
 This guide provides the constraint specification format, bytecode compilation pipeline, per-invariant executable schemas, validation sequence with latency targets, CVS integration surface, adapter implementations, deployment topology patterns, performance envelope specifications, security model requirements, and a complete conformance test suite.
 
@@ -701,31 +701,34 @@ For implementations using a forked constraint set (different hash), `canonical_h
 **Fail-open implementation:**
 
 ```python
-def evaluate_with_fail_open(proposal, constraints):
+def evaluate_with_infrastructure_failure_deny(proposal, constraints):
     """
-    Returns (result, evidence_type) tuple.
+    Returns (result, deny_cause, evidence_type) tuple.
     result: 'allow' | 'deny'
-    evidence_type: 'evaluated' | 'gap'
+    deny_cause: None | 'constraint_violation' | 'evaluation_unavailable'
+    evidence_type: 'evaluated' | 'evaluation_unavailable_deny'
     """
     try:
         result = evaluate_constraints(proposal, constraints)
-        return (result, 'evaluated')
+        return (result, 'constraint_violation' if result == 'deny' else None, 'evaluated')
     except GateUnavailableError:
-        record_validation_gap(
+        record_evaluation_unavailable_deny(
             proposal_id=proposal.id,
             agent_id=proposal.agent_id,
-            gap_start=now(),
-            reason='gate_unavailable'
+            failure_cause='gate_unavailable',
+            timestamp=now(),
+            retry_permitted=True
         )
-        return ('allow', 'gap')
+        return ('deny', 'evaluation_unavailable', 'evaluation_unavailable_deny')
     except EvaluationTimeout:
-        record_validation_gap(
+        record_evaluation_unavailable_deny(
             proposal_id=proposal.id,
             agent_id=proposal.agent_id,
-            gap_start=now(),
-            reason='evaluation_timeout'
+            failure_cause='evaluation_timeout',
+            timestamp=now(),
+            retry_permitted=True
         )
-        return ('allow', 'gap')
+        return ('deny', 'evaluation_unavailable', 'evaluation_unavailable_deny')
 ```
 
 The gap record is forwarded to the witness layer regardless of whether the witness layer is available. If the witness layer is also unavailable, the gap record is queued locally and forwarded on reconnection. Local queue depth and forwarding latency are performance envelope parameters defined in §8.
@@ -735,11 +738,13 @@ The gap record is forwarded to the witness layer regardless of whether the witne
 ```json
 [
   {
-    "description": "gate failure — must allow and produce gap record",
+    "description": "gate failure — must produce evaluation-unavailable DENY, commit path remains closed",
     "setup": "inject GateUnavailableError at evaluation start",
-    "expected_execution_result": "allow",
-    "expected_evidence_type": "gap",
-    "gap_record_fields_required": ["proposal_id", "agent_id", "gap_start", "reason"]
+    "expected_result": "deny",
+    "expected_deny_cause": "evaluation_unavailable",
+    "expected_retry_permitted": true,
+    "expected_execution_result": "no execution — commit path remains closed",
+    "gap_record_fields_required": ["proposal_id", "agent_id", "failure_cause", "timestamp", "retry_permitted"]
   },
   {
     "description": "deny result discloses failed invariant — human can act on information",
@@ -843,12 +848,14 @@ PROPOSING ENTITY          COMMIT GATE               CONTEXT REGISTRIES        WI
 ── async (off critical path) ──────────────────────────────────────────────────────────►
    CVS emission never delays execution. Gate does not wait for witness acknowledgement.
 
-FAIL-OPEN PATH (gate unavailable or Step 3 timeout):
+EVALUATION-UNAVAILABLE DENY PATH (gate unavailable or Step 3 timeout):
        │                       │                             │                        │
        │                  GateUnavailable                    │                        │
        │                  or EvalTimeout                     │                        │
-       │   [no gate signal — fail-open handler opens commit path]                    │
-       │                       │── emit validation_gap ─────────────────────────────►│
+       │   [infrastructure-failure handler — commit path remains closed]             │
+       │◄── DENY (evaluation_unavailable, retry_permitted: true) ───────────────────│
+       │                       │── emit deny_evidence_object ───────────────────────►│
+       │                       │── emit gap_record (sidecar) ───────────────────────►│
        │                       │   [queued locally if CVS unavailable]               │
 ```
 
@@ -908,11 +915,11 @@ If any invariant produces `false`, the overall result is `DENY`. The deny respon
 
 **Step 4 — Commit Authorisation Signal (target: <5μs)**
 
-The evaluation result **MUST** be one of exactly two values: `ALLOW` or `DENY`. No other output is valid. The gate **MUST NOT** return a score, a probability, a confidence value, a recommendation, a conditional allow, a deferred result, or a request for human review in lieu of a binary decision. Any implementation that returns such output is not a Commit Gate. When the gate is unavailable or evaluation times out, the gate produces no output — the fail-open handler engages, the commit path opens, and the witness layer records the ungoverned period as an evidence chain gap. Constraint satisfaction was not established; execution proceeds because availability is prioritised over blocking.
+The evaluation result **MUST** be one of exactly two values: `ALLOW` or `DENY`. No other output is valid. The gate **MUST NOT** return a score, a probability, a confidence value, a recommendation, a conditional allow, a deferred result, or a request for human review in lieu of a binary decision. Any implementation that returns such output is not a Commit Gate. When the gate is unavailable or evaluation times out, the infrastructure-failure handler produces DENY (deny_cause: evaluation_unavailable). The commit path remains closed. Execution does not proceed. The failure cause and retry path are disclosed. The CVS sidecar records the unavailability period as a gap record. Admissibility requires completed evaluation — an action does not commit because the gate was unavailable.
 
 - `ALLOW` — the gate **MUST** return this result. The commit path opens. Execution proceeds. The result and its correlation ID are forwarded to the witness layer asynchronously. The gate **MUST NOT** append conditions, recommendations, or caveats to an ALLOW result.
 - `DENY` — the gate **MUST** return this result with the violated invariant identifier and deny message. The commit path remains closed. Execution does not proceed. The denial event is forwarded to the witness layer. The gate **MUST NOT** return a DENY result that omits the violated invariant identifier.
-- **Fail-open (gate unavailable or evaluation timeout)** — the gate produces no output. The fail-open handler opens the commit path. The fail-open handler emits a `validation_gap` record to the witness layer. A fail-open event **MUST NOT** be treated as ALLOW. It is not an evaluation output — it is a record indicating that constraint evaluation did not occur.
+- **Evaluation-Unavailable DENY (gate unavailable or evaluation timeout)** — the infrastructure-failure handler produces DENY (deny_cause: evaluation_unavailable). The commit path remains closed. Execution does not proceed. The DENY **MUST** include failure cause and retry_permitted: true. The CVS sidecar emits a gap record. An evaluation-unavailable DENY **MUST NOT** be treated as ALLOW. It is not a constraint violation — no invariant was evaluated.
 
 The witness layer forwarding is asynchronous and off the critical path. Execution does not wait for witness confirmation. The asynchronous witness path **MUST NOT** carry any signal that can alter or override the synchronous evaluation result. See §5 for the CVS integration surface.
 
@@ -922,7 +929,7 @@ The witness layer forwarding is asynchronous and off the critical path. Executio
 |---|---|---|---|
 | Intent Declaration | <5μs | <10μs | Reject as malformed |
 | Context Binding | <10μs | <20μs | Use cached context; flag stale |
-| Constraint Evaluation | <30μs | <100μs | Fail open; emit gap record |
+| Constraint Evaluation | <30μs | <100μs | Evaluation-Unavailable DENY; emit gap record to CVS sidecar |
 | Commit Authorisation Signal | <5μs | <10μs | Non-blocking; log latency breach |
 | **Total** | **<50μs** | **<200μs** | |
 
@@ -944,7 +951,7 @@ In observation mode:
 
 - all seven invariants are evaluated at every boundary crossing
 - no execution is blocked — all proposals proceed regardless of evaluation result
-- all gate results are recorded: ALLOW or DENY; fail-open events are recorded as evidence chain gaps by the witness layer
+- all gate results are recorded: ALLOW or DENY; evaluation-unavailable DENY events are recorded by the witness layer; CVS sidecar records gap
 
 Observation mode surfaces three categories of problem before enforcement depends on them:
 
@@ -1041,9 +1048,28 @@ Implementation requirements:
 - The CVS process has no access to gate configuration, constraint specifications, or evaluation logic
 - These access controls are structural (IAM, network segmentation) — not reliant on personnel policy
 
-### 5.3 Validation Gap Records Are First-Class Witness Events
+### 5.3 Evaluation-Unavailable DENY Records Are First-Class Witness Events
 
-When the gate fails open (Step 3 timeout or gate unavailability), the gap record **MUST** be forwarded to the CVS event queue with the following fields:
+When the gate cannot evaluate (Step 3 timeout or gate unavailability), the infrastructure-failure handler produces DENY (deny_cause: evaluation_unavailable). The deny Evidence Object and gap record **MUST** be forwarded to the CVS event queue.
+
+**Deny Evidence Object (evaluation-unavailable):**
+
+```json
+{
+  "observation_point": "validation_result",
+  "overall_result": "deny",
+  "deny_cause": "evaluation_unavailable",
+  "failure_cause": "gate_unavailable | evaluation_timeout | process_crash",
+  "retry_permitted": true,
+  "proposal_id": "string",
+  "agent_id": "string",
+  "timestamp": "string — ISO 8601",
+  "spec_hash": "string",
+  "correlation_id": "string"
+}
+```
+
+**CVS sidecar gap record:**
 
 ```json
 {
@@ -1052,7 +1078,7 @@ When the gate fails open (Step 3 timeout or gate unavailability), the gap record
   "agent_id": "string",
   "gap_start": "string — ISO 8601",
   "gap_reason": "gate_unavailable | evaluation_timeout | process_crash",
-  "executing_identity": "string — identity that proceeded through the gap",
+  "gate_output_during_gap": "deny_evaluation_unavailable",
   "correlation_id": "string"
 }
 ```
@@ -1389,7 +1415,7 @@ The gate process **MUST** run in isolation from the execution surface it governs
 - No inbound connections from any source other than the execution surface
 - Gate process **MUST NOT** have write access to execution surface storage
 
-If the gate process is compromised, it can be replaced without modifying the execution surface. The execution surface continues operating in fail-open mode during gate replacement; gap records accumulate for the downtime period.
+If the gate process is compromised, it can be replaced without modifying the execution surface. The execution surface produces Evaluation-Unavailable DENY during gate replacement; gap records accumulate at the CVS sidecar for the downtime period.
 
 ### 9.3 HSM Key Custody for Specification Signing
 
@@ -1482,7 +1508,7 @@ If a single operator account has both gate administrative access and evidence st
 *Residual risk:* Bypass accumulation is not detectable by examining any single event in the evidence chain. It requires structural pathway audit against the full execution surface topology. Deployments without a periodic structural audit process are vulnerable to this failure mode regardless of initial implementation quality.
 
 **Validation gap exploitation** — an adversary deliberately induces gate failure to create windows of unconstrained execution.
-*Mechanism:* Resource exhaustion, network partition, or targeted denial-of-service against the gate process. During the resulting gap, execution proceeds unconstrained.
+*Mechanism:* Resource exhaustion, network partition, or targeted denial-of-service against the gate process. Under the Evaluation-Unavailable DENY doctrine, gate failure produces DENY — the commit path remains closed. The attack surface shifts from ungoverned execution to denial of service. Gate high-availability configuration is the mitigation.
 *Defense:* Validation gaps are first-class witness layer records. The gap duration, reason, and executing identity during the gap are all captured. Post-gap forensic analysis identifies all executions during the gap window. Gate high-availability configuration (§7) is the primary mitigation — redundant gate instances reduce gap windows to the failover interval.
 *Residual risk:* Executions during a gap are unconstrained. They are recorded but not blocked. Gate infrastructure resilience determines the achievable gap window. Single-gate deployments with no redundancy have longer gap windows under targeted attack.
 
@@ -1509,8 +1535,8 @@ A gate implementation satisfying 512's properties exhibits all of the following.
 - Evaluate all seven invariants on every proposal without exception
 - Return binary output only: ALLOW or DENY; never scored, probabilistic, conditional, or deferred results
 - Complete evaluation in a median of <50μs and a 99th percentile of <200μs at sustained production throughput
-- Fail open: when the gate is unavailable or evaluation times out, execution proceeds and a gap record is generated
-- Emit gap records for all fail-open events, forward them to the witness layer, and persist locally if the witness layer is unavailable
+- Produce Evaluation-Unavailable DENY: when the gate is unavailable or evaluation times out, produce DENY (deny_cause: evaluation_unavailable) with failure cause and retry path; commit path remains closed; execution does not proceed
+- Emit gap records to the CVS sidecar for all evaluation-unavailable DENY events; persist locally if the sidecar is unavailable; forward on reconnection
 - Verify the canonical specification hash (`7B08C024B77A24830C15E7952D6E54BED383AA960F4C74A71FF95CE51F4D80F5`) at startup and refuse to start on hash mismatch
 - Load the specification into a read-only memory region after startup verification
 - Emit three CVS observation events per evaluation: pre-validation, validation-result, post-execution
@@ -1527,7 +1553,8 @@ A gate implementation satisfying 512's properties exhibits all of the following.
 A gate implementation satisfying 512's properties does not exhibit any of the following. An implementation that exhibits any item does not satisfy 512's properties:
 
 - Return a scored, probabilistic, conditional, or deferred result from gate evaluation
-- Block execution when the gate is unavailable (fail-closed behaviour)
+- Block execution when the gate is unavailable without producing Evaluation-Unavailable DENY with disclosed cause and retry path (opaque blocking)
+- Open the commit path when the gate is unavailable (ungoverned execution — non-conformant)
 - Allow runtime modification of the constraint specification without a process restart and hash re-verification
 - Accept a specification that does not hash-verify at startup
 - Allow the gate process to read from the evidence store
@@ -1558,9 +1585,9 @@ An implementation may be described as satisfying 512's properties only within th
 | Evaluation latency (median) | 10,000 proposals at production throughput | Median <50μs |
 | Evaluation latency (p99) | 10,000 proposals at production throughput | p99 <200μs |
 | Deterministic evaluation | 1,000 identical proposal pairs | All pairs produce identical output |
-| Fail-open on gate failure | Kill gate process mid-evaluation | Execution continues; gap record generated |
-| Fail-open on timeout | Inject 200μs+ evaluation delay | Execution continues; gap record generated |
-| Gap record contents | Inspect gap record after fail-open | Contains proposal_id, agent_id, gap_start, reason |
+| Evaluation-Unavailable DENY on gate failure | Kill gate process mid-evaluation | DENY returned (deny_cause: evaluation_unavailable); commit path remains closed; gap record emitted to CVS sidecar |
+| Evaluation-Unavailable DENY on timeout | Inject 200μs+ evaluation delay | DENY returned (deny_cause: evaluation_unavailable); commit path remains closed; gap record emitted to CVS sidecar |
+| Gap record contents | Inspect gap record after evaluation-unavailable DENY | Contains proposal_id, agent_id, gap_start, gap_reason, gate_output_during_gap |
 | Gap record persistence | Kill CVS queue during gap event | Gap record persisted locally; forwarded on reconnection |
 | All 7 invariants evaluated | Unit test each invariant (§3 fixtures) | All 28 fixture tests pass |
 | Binary output only | Submit 100 proposals | All responses contain only `ALLOW` or `DENY` |
@@ -1677,7 +1704,7 @@ For the full constraint definition model, per-invariant definition checklist, an
 
 ## Conclusion
 
-A Commit Gate satisfying 512's properties is a deterministic function operating at the commit boundary of a machine-speed execution system. It enforces seven pre-committed invariants in 10–50μs, fails open, and produces a structured evidence stream that a CVS-compatible witness layer transforms into an independently verifiable cryptographic record.
+A Commit Gate satisfying 512's properties is a deterministic function operating at the commit boundary of a machine-speed execution system. It enforces seven pre-committed invariants in 10–50μs. On infrastructure failure, it produces Evaluation-Unavailable DENY — the commit boundary holds unconditionally. It produces a structured evidence stream that a CVS-compatible witness layer transforms into an independently verifiable cryptographic record.
 
 The engineering task is straightforward. Find the commit boundary — the precise point at which proposals become irreversible facts. Insert the gate at that point such that no path to that boundary exists without the gate's authorisation signal. Eliminate parallel paths. Verify the specification hash. Instrument the three CVS observation points. Run Discovery Phase before enforcement. Pass all tests in §11.4.
 
@@ -1695,14 +1722,37 @@ Systems that do not instrument such a gate operate without that record. The cons
 
 | Field | Value |
 |---|---|
-| Document | `512_IMPLEMENTATION_v3.3.md` |
-| Version | 3.3 |
-| Date | May 2026 |
+| Document | `512_IMPLEMENTATION_v3.4.md` |
+| Version | 3.4 |
+| Date | June 2026 |
 | Author | Jonathan M. Watson |
 | Audience | Engineers |
 | Status | Active |
 | Canonical Repository | github.com/JonathanMastersWatson/512 |
 | Specification Commitment | SHA-256: `7B08C024B77A24830C15E7952D6E54BED383AA960F4C74A71FF95CE51F4D80F5` |
+
+### Changelog — v3.4
+
+**June 2026 — Evaluation-Unavailable DENY doctrine throughout.**
+
+**Modifications:**
+- Abstract and Conclusion: "fails open" replaced with "produces Evaluation-Unavailable DENY — the commit boundary holds."
+- §3.6 Invariant 6: `evaluate_with_fail_open` returning `('allow', 'gap')` replaced with `evaluate_with_infrastructure_failure_deny` returning `('deny', 'evaluation_unavailable', ...)`. Unit test fixture corrected — expected result is DENY, commit path remains closed.
+- §4.1 sequence diagram: FAIL-OPEN PATH redrawn as EVALUATION-UNAVAILABLE DENY PATH. Infrastructure-failure handler produces DENY. Post-execution annotated ALLOW only.
+- §4.1 Step 4 prose: "fail-open handler engages / commit path opens / execution proceeds" replaced with Evaluation-Unavailable DENY doctrine.
+- §4.1 Step 4 bullet: "Fail-open" bullet replaced with "Evaluation-Unavailable DENY" bullet.
+- §4.2 latency table: failure mode corrected from "Fail open; emit gap record" to "Evaluation-Unavailable DENY; emit gap record to CVS sidecar."
+- §4.4 observation mode: "fail-open events recorded as evidence chain gaps" replaced with "evaluation-unavailable DENY events recorded; CVS sidecar records gap."
+- §5.3: retitled from "Validation Gap Records" to "Evaluation-Unavailable DENY Records." Deny Evidence Object schema added. Gap record schema updated — `executing_identity` removed, `gate_output_during_gap` added.
+- §9 Attack Vectors: gap exploitation vector — execution-proceeds doctrine replaced with Evaluation-Unavailable DENY doctrine; attack surface shift noted.
+- §11.1 Mandatory Behaviors: "Fail open: execution proceeds" replaced with "Produce Evaluation-Unavailable DENY: commit path remains closed."
+- §11.2 Prohibited Behaviors: "Block execution when gate unavailable (fail-closed)" replaced with two entries — opaque blocking and opening the commit path on gate unavailability.
+- §11.4 Verification Checklist: fail-open test rows replaced — pass condition changed from "Execution continues" to "DENY returned; commit path remains closed."
+- Gate replacement note: "execution surface continues operating in fail-open mode" replaced with "produces Evaluation-Unavailable DENY during gate replacement."
+
+**Additions:** Nothing added.
+
+**Removals:** `evaluate_with_fail_open` function returning `('allow', 'gap')` — removed. `executing_identity` field from gap record schema — removed.
 
 ### Changelog — v3.3
 
