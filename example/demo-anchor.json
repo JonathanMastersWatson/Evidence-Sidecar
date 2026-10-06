@@ -1,0 +1,9 @@
+{
+  "anchored_at": "2026-10-06T19:34:35+00:00",
+  "batch_root": "b24f3fcde45ede6bf331541b491f1d90d6f2a084de1cbba62b5370763a36dc27",
+  "chain_head": "03c53f4c815cee3c5fdcefa9aa1b8f0feaa84b1df9990a53a67181b148ecae17",
+  "dos_hash": "478312623574f44840c0308e815dd414aa9476f922a8e5f391e697d590aa4fb6",
+  "event_count": 8,
+  "note": "example: print this record; production submits batch_root to XRPL (or any public settlement ledger)",
+  "witness_id": "example-witness-01"
+}
