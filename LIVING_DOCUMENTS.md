@@ -60,3 +60,27 @@ notices have been removed. A new archive hash will be committed to
 record the sealed state.
 
 Archive hash record: `CANONICAL_COMMITMENT.md` at repo root.
+
+---
+
+## Doctrine Additions — October 2026 (unsealed)
+
+Since the May 2026 seal, new witness doctrine has been settled and is not
+yet in this repository: PULSE ping-sweep semantics (feeder-originated pulse,
+shared pulse_id threading per-endpoint receipts into one observable event,
+TTL as the enforced sweep window, absence-as-evidence via the Declared
+Observation Surface's coverage-gap detection); the witness-initiation rule
+(the witness may initiate only what witnessing requires — ledger-directed
+and self-directed acts — never feeder-directed probes, triggers, or
+polling); and the 512/CVS disjointness restatement (CVS witnesses
+constraint-evaluation events, never executes application logic). A witness
+rebuild is in progress; its code or an explicit pointer lands here before
+the final seal.
+
+## Final Seal — December 5, 2026 (planned)
+
+A final seal of this repository is planned for December 5, 2026, alongside
+final seals of the 512, Schema PRIME, and Machine Speed Papers repositories.
+Each seal follows the established convention: archive hash, dated proof
+record, XRPL anchoring. After the final seal these repositories stand as
+tools and resources for future developers and as proof of originatorship.

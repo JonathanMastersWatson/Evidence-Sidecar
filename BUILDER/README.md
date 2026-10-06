@@ -16,14 +16,14 @@ and how it relates to independently developed parallel systems.
 | `CVS_ARCHITECTURE_v3.2.md` | CTO / Board | What CVS is — the three-plane architecture, Evidence Object model, fail-open principle, open commons model |
 | `CVS_IMPLEMENTATION_v2.7.md` | Engineer | How to build a conformant CVS implementation — Access Plane, Interpretation Plane, integration patterns, conformance requirements |
 | `VCP_AND_CVS.md` | CTO / Architect | Parallel development acknowledgment — VeritasChain Protocol (VCP) and CVS are independent parallel developments; priority and differentiators documented |
-| `512_CVS_ENTERPRISE_v1_0.md` | CTO / CFO / Board | Enterprise executive brief — the execution boundary problem and what 512/CVS resolves |
+| `512_CVS_ENTERPRISE_v1_1.md` | CTO / CFO / Board | Enterprise executive brief — the execution boundary problem and what 512/CVS resolves |
 
 ---
 
 ## Where to Start
 
 **If you are a CTO or board member:** Read `CVS_ARCHITECTURE_v3.2.md` first.
-Then `512_CVS_ENTERPRISE_v1_0.md` for the financial and operational case.
+Then `512_CVS_ENTERPRISE_v1_1.md` for the financial and operational case.
 
 **If you are an engineer:** Read `CVS_ARCHITECTURE_v3.2.md` §1–3 for the
 architectural model, then `CVS_IMPLEMENTATION_v2.7.md` for the build reference.
